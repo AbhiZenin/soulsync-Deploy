@@ -1,0 +1,92 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: soulsync
+      POSTGRES_USER: soulsync
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-soulsync_dev}
+    # PostgreSQL stays on Docker's private network. No host 5432 binding,
+    # so an existing PostgreSQL installation on macOS cannot conflict with it.
+    volumes:
+      - soulsync_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U soulsync -d soulsync" ]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  backend:
+    build: ./backend
+    environment:
+      
+      DATABASE_URL: jdbc:postgresql://postgres:5432/soulsync
+      DATABASE_USERNAME: soulsync
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-soulsync_dev}
+      JWT_SECRET: ${JWT_SECRET:-dev-only-change-this-secret-key-before-production-2026}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      PHOTO_STORAGE_PROVIDER: ${PHOTO_STORAGE_PROVIDER:-local}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      DEV_MODE: ${DEV_MODE:-true}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      MAIL_ENABLED: ${MAIL_ENABLED:-false}
+      MAIL_HOST: ${MAIL_HOST:-mailpit}
+      MAIL_PORT: ${MAIL_PORT:-1025}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_SMTP_AUTH: ${MAIL_SMTP_AUTH:-false}
+      MAIL_STARTTLS: ${MAIL_STARTTLS:-false}
+      MAIL_FROM: ${MAIL_FROM:-no-reply@soulsync.local}
+      OTP_EXPIRY_MINUTES: ${OTP_EXPIRY_MINUTES:-10}
+      OTP_RESEND_COOLDOWN_SECONDS: ${OTP_RESEND_COOLDOWN_SECONDS:-60}
+      OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS:-5}
+      SMS_PROVIDER: ${SMS_PROVIDER:-dev}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM_NUMBER: ${TWILIO_FROM_NUMBER:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_PREMIUM: ${STRIPE_PRICE_PREMIUM:-}
+      STRIPE_PRICE_PREMIUM_PLUS: ${STRIPE_PRICE_PREMIUM_PLUS:-}
+      UPLOADS_DIR: /app/uploads
+
+    ports:
+      - "8080:8080"
+    volumes:
+      - soulsync_uploads:/app/uploads
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health/readiness | grep -q '\"status\":\"UP\"'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: /api/v1
+        NEXT_PUBLIC_WS_URL: ws://localhost:8080/ws
+    environment:
+      NEXT_PUBLIC_API_URL: /api/v1
+      NEXT_PUBLIC_WS_URL: ws://localhost:8080/ws
+      BACKEND_INTERNAL_URL: http://backend:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+volumes:
+  soulsync_postgres:
+  soulsync_uploads:

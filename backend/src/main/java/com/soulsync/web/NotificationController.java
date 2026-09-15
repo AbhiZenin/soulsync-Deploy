@@ -1,0 +1,4 @@
+package com.soulsync.web;
+import com.soulsync.service.NotificationService; import lombok.RequiredArgsConstructor; import org.springframework.http.*; import org.springframework.web.bind.annotation.*; import java.util.*;
+@RestController @RequestMapping("/api/v1/notifications") @RequiredArgsConstructor
+public class NotificationController {private final NotificationService service; record Count(long count){} @GetMapping List<NotificationService.NotificationDto> list(){return service.list();}@GetMapping("/unread-count") Count count(){return new Count(service.unread());}@PatchMapping("/{id}/read") NotificationService.NotificationDto read(@PathVariable UUID id){return service.read(id);}@PatchMapping("/read-all") ResponseEntity<Void> readAll(){service.readAll();return ResponseEntity.noContent().build();}}

@@ -1,0 +1,3 @@
+package com.soulsync.service;
+import java.security.*; import java.util.Base64;
+public final class TokenUtil { private static final SecureRandom RNG=new SecureRandom(); private TokenUtil(){} public static String randomToken(){ byte[] b=new byte[32]; RNG.nextBytes(b); return Base64.getUrlEncoder().withoutPadding().encodeToString(b); } public static String sha256(String v){ try{ byte[] d=MessageDigest.getInstance("SHA-256").digest(v.getBytes(java.nio.charset.StandardCharsets.UTF_8)); return java.util.HexFormat.of().formatHex(d); }catch(NoSuchAlgorithmException e){throw new IllegalStateException(e);} } }

@@ -1,0 +1,3 @@
+package com.soulsync.repository;
+import com.soulsync.domain.*; import com.soulsync.domain.Enums.InterestStatus; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*;
+public interface InterestRepository extends JpaRepository<Interest, UUID> { Optional<Interest> findBySenderIdAndReceiverId(UUID senderId, UUID receiverId); List<Interest> findBySenderIdOrderByCreatedAtDesc(UUID senderId); List<Interest> findByReceiverIdOrderByCreatedAtDesc(UUID receiverId); Optional<Interest> findByIdAndReceiverId(UUID id, UUID receiverId); boolean existsBySenderIdAndReceiverIdAndStatus(UUID senderId, UUID receiverId, InterestStatus status); }

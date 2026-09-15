@@ -1,0 +1,12 @@
+package com.soulsync.service;
+import com.soulsync.domain.*; import com.soulsync.domain.Enums.ReportStatus; import com.soulsync.exception.*; import com.soulsync.repository.*; import com.soulsync.security.CurrentUser; import lombok.RequiredArgsConstructor; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional; import java.util.*;
+@Service @RequiredArgsConstructor
+public class SafetyService { private final BlockRepository blocks; private final ReportRepository reports; private final ProfileViewRepository views; private final ProfileRepository profiles; private final UserRepository users; private final CurrentUser current;
+ public record BlockDto(UUID userId,java.time.Instant createdAt){} public record ReportDto(UUID id,UUID reportedUserId,String reason,String status,java.time.Instant createdAt){} public record ViewDto(UUID userId,String displayName,java.time.Instant viewedAt){}
+ @Transactional public BlockDto block(UUID targetId){if(current.id().equals(targetId))throw new BadRequestException("Cannot block yourself");var target=user(targetId);var b=blocks.findByBlockerIdAndBlockedId(current.id(),targetId).orElseGet(()->blocks.save(Block.builder().blocker(current.entity()).blocked(target).build()));return new BlockDto(targetId,b.getCreatedAt());}
+ @Transactional public void unblock(UUID targetId){blocks.findByBlockerIdAndBlockedId(current.id(),targetId).ifPresent(blocks::delete);}
+ @Transactional(readOnly=true) public List<BlockDto> blocked(){return blocks.findByBlockerId(current.id()).stream().map(b->new BlockDto(b.getBlocked().getId(),b.getCreatedAt())).toList();}
+ @Transactional public ReportDto report(UUID targetId,String reason,String details){if(current.id().equals(targetId))throw new BadRequestException("Cannot report yourself");var r=reports.save(Report.builder().reporter(current.entity()).reported(user(targetId)).reason(reason).details(details).status(ReportStatus.OPEN).build());return dto(r);}
+ @Transactional(readOnly=true) public List<ViewDto> viewers(){return views.findTop50ByViewedIdOrderByViewedAtDesc(current.id()).stream().map(v->new ViewDto(v.getViewer().getId(),profiles.findByUserId(v.getViewer().getId()).map(Profile::getDisplayName).orElse("SoulSync member"),v.getViewedAt())).toList();}
+ private User user(UUID id){return users.findById(id).orElseThrow(()->new NotFoundException("User not found"));} private ReportDto dto(Report r){return new ReportDto(r.getId(),r.getReported().getId(),r.getReason(),r.getStatus().name(),r.getCreatedAt());}
+}

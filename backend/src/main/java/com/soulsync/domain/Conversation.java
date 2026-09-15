@@ -1,0 +1,4 @@
+package com.soulsync.domain;
+import jakarta.persistence.*; import lombok.*; import java.time.Instant; import java.util.UUID;
+@Entity @Table(name="conversations",uniqueConstraints=@UniqueConstraint(name="uk_conversation_pair",columnNames={"user1_id","user2_id"})) @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Conversation { @Id private UUID id; @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="user1_id",nullable=false) private User user1; @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="user2_id",nullable=false) private User user2; @Column(name="created_at",nullable=false) private Instant createdAt; @Column(name="updated_at",nullable=false) private Instant updatedAt; @PrePersist void pre(){var n=Instant.now();if(id==null)id=UUID.randomUUID();if(createdAt==null)createdAt=n;updatedAt=n;} @PreUpdate void up(){updatedAt=Instant.now();} }

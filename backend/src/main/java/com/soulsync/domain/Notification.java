@@ -1,0 +1,4 @@
+package com.soulsync.domain;
+import jakarta.persistence.*; import lombok.*; import java.time.Instant; import java.util.UUID; import com.soulsync.domain.Enums.NotificationType;
+@Entity @Table(name="notifications") @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Notification { @Id private UUID id; @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="user_id",nullable=false) private User user; @Enumerated(EnumType.STRING) @Column(nullable=false) private NotificationType type; @Column(nullable=false) private String title; @Column(nullable=false,length=1000) private String body; @Column(name="is_read",nullable=false) @Builder.Default private boolean read=false; @Column(name="created_at",nullable=false) private Instant createdAt; @PrePersist void pre(){if(id==null)id=UUID.randomUUID();if(createdAt==null)createdAt=Instant.now();} }
