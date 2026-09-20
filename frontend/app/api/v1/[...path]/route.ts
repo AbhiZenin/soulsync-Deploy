@@ -9,9 +9,11 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
   target.search = incoming.search;
 
   const headers = new Headers(request.headers);
-  headers.delete('host');
-  headers.delete('content-length');
-  headers.delete('connection');
+
+ headers.delete('host');
+ headers.delete('content-length');
+ headers.delete('connection');
+ headers.delete('accept-encoding');
 
   const init: RequestInit = {
     method: request.method,
@@ -27,8 +29,11 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
   try {
     const upstream = await fetch(target, init);
     const responseHeaders = new Headers(upstream.headers);
+
     responseHeaders.delete('transfer-encoding');
     responseHeaders.delete('connection');
+    responseHeaders.delete('content-encoding');
+    responseHeaders.delete('content-length');
     return new Response(upstream.body, {
       status: upstream.status,
       statusText: upstream.statusText,
