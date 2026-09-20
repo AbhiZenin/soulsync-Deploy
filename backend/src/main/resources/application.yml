@@ -84,10 +84,3 @@ soulsync:
     expiry-minutes: ${OTP_EXPIRY_MINUTES:10}
     resend-cooldown-seconds: ${OTP_RESEND_COOLDOWN_SECONDS:60}
     max-attempts: ${OTP_MAX_ATTEMPTS:5}
-
-  sms:
-    provider: ${SMS_PROVIDER:dev}
-    twilio:
-      account-sid: ${TWILIO_ACCOUNT_SID:}
-      auth-token: ${TWILIO_AUTH_TOKEN:}
-      from-number: ${TWILIO_FROM_NUMBER:}

@@ -1,1297 +1,796 @@
 'use client';
 
-import {
-    FormEvent,
-    useEffect,
-    useState
-} from 'react';
-
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import AppShell from '@/components/AppShell';
 import SecureImage from '@/components/SecureImage';
-
 import { api } from '@/lib/api';
 import type { ProfileDetail } from '@/lib/types';
 
-
 const empty = {
-    displayName: '',
-    dateOfBirth: '',
-    gender: '',
-    heightCm: '',
-    maritalStatus: '',
-    motherTongue: '',
-    religion: '',
-    community: '',
-    country: '',
-    state: '',
-    city: '',
-    education: '',
-    occupation: '',
-    incomeRange: '',
-    diet: '',
-    smoking: '',
-    drinking: '',
-    about: '',
-    profileCreatedBy: '',
-    visibility: 'PUBLIC'
+  displayName: '',
+  dateOfBirth: '',
+  gender: '',
+  heightCm: '',
+  maritalStatus: '',
+  motherTongue: '',
+  religion: '',
+  community: '',
+  country: '',
+  state: '',
+  city: '',
+  education: '',
+  occupation: '',
+  incomeRange: '',
+  diet: '',
+  smoking: '',
+  drinking: '',
+  about: '',
+  profileCreatedBy: '',
+  visibility: 'PUBLIC'
 };
 
-
 export default function Profile() {
+  const [form, setForm] = useState<any>(empty);
+  const [photos, setPhotos] = useState<ProfileDetail['photos']>([]);
+  const [completion, setCompletion] = useState(0);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [msgType, setMsgType] = useState<'success' | 'error'>('success');
+  const [photoError, setPhotoError] = useState('');
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    const [form, setForm] =
-        useState<any>(empty);
+  useEffect(() => {
+    api<ProfileDetail>('/profile/me')
+      .then(p => {
+        applyProfile(p);
+      })
+      .catch(e => {
+        setMsgType('error');
+        setMsg(e instanceof Error ? e.message : 'Unable to load profile.');
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-    const [photos, setPhotos] =
-        useState<ProfileDetail['photos']>([]);
+  function applyProfile(profile: ProfileDetail) {
+    setForm({
+      ...empty,
+      ...profile,
+      dateOfBirth: profile.dateOfBirth ?? '',
+      heightCm: profile.heightCm ?? ''
+    });
+    setPhotos(profile.photos ?? []);
+    setCompletion(profile.completionPercent ?? 0);
+    setEmailVerified(Boolean(profile.emailVerified));
+  }
 
-    const [msg, setMsg] =
-        useState('');
+  function set(key: string, value: any) {
+    setForm((current: any) => ({
+      ...current,
+      [key]: value
+    }));
+  }
 
-    const [photoError, setPhotoError] =
-        useState('');
+  async function save(e: FormEvent) {
+    e.preventDefault();
+    setMsg('');
+    setSaving(true);
 
-    const [photoBusy, setPhotoBusy] =
-        useState(false);
+    try {
+      const body = {
+        ...form,
+        heightCm: form.heightCm ? Number(form.heightCm) : null,
+        age: undefined,
+        photos: undefined,
+        userId: undefined,
+        completionPercent: undefined,
+        lastActiveAt: undefined,
+        primaryPhoto: undefined,
+        matchScore: undefined,
+        emailVerified: undefined
+      };
 
+      const profile = await api<ProfileDetail>('/profile/me', {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      });
 
-    useEffect(() => {
+      applyProfile(profile);
+      setMsgType('success');
+      setMsg(`Profile saved. You're ${profile.completionPercent}% complete.`);
+    } catch (e) {
+      setMsgType('error');
+      setMsg(e instanceof Error ? e.message : 'Unable to save profile.');
+    } finally {
+      setSaving(false);
+    }
+  }
 
-        api<ProfileDetail>('/profile/me')
-            .then(p => {
+  async function refreshPhotos() {
+    const profile = await api<ProfileDetail>('/profile/me');
+    applyProfile(profile);
+  }
 
-                setForm({
-                    ...empty,
-                    ...p,
-                    dateOfBirth:
-                        p.dateOfBirth ?? ''
-                });
+  async function upload(file: File) {
+    setPhotoError('');
 
-                setPhotos(
-                    p.photos ?? []
-                );
-
-            })
-            .catch(e => {
-
-                setMsg(
-                    e instanceof Error
-                        ? e.message
-                        : 'Unable to load profile.'
-                );
-
-            });
-
-    }, []);
-
-
-    function set(
-        key: string,
-        value: any
-    ) {
-
-        setForm((current: any) => ({
-            ...current,
-            [key]: value
-        }));
-
+    if (photos.length >= 6) {
+      setPhotoError('You can upload a maximum of 6 photos.');
+      return;
     }
 
+    try {
+      setPhotoBusy(true);
 
-    async function save(
-        e: FormEvent
-    ) {
+      const formData = new FormData();
+      formData.append('file', file);
 
-        e.preventDefault();
+      await api('/photos', {
+        method: 'POST',
+        body: formData
+      });
 
-        setMsg('');
-
-        try {
-
-            const body = {
-                ...form,
-
-                heightCm:
-                    form.heightCm
-                        ? Number(form.heightCm)
-                        : null,
-
-                age: undefined,
-                photos: undefined,
-                userId: undefined,
-                completionPercent: undefined,
-                lastActiveAt: undefined,
-                primaryPhoto: undefined,
-                matchScore: undefined,
-                emailVerified: undefined,
-                phoneVerified: undefined
-            };
-
-
-            const profile =
-                await api<ProfileDetail>(
-                    '/profile/me',
-                    {
-                        method: 'PUT',
-                        body:
-                            JSON.stringify(body)
-                    }
-                );
-
-
-            setForm({
-                ...empty,
-                ...profile,
-                dateOfBirth:
-                    profile.dateOfBirth ?? ''
-            });
-
-
-            setPhotos(
-                profile.photos ?? []
-            );
-
-
-            setMsg(
-                `Saved. Profile is ${profile.completionPercent}% complete.`
-            );
-
-        } catch (e) {
-
-            setMsg(
-                e instanceof Error
-                    ? e.message
-                    : 'Unable to save profile.'
-            );
-
-        }
-
+      await refreshPhotos();
+    } catch (e) {
+      setPhotoError(
+        e instanceof Error ? e.message : 'Unable to upload photo.'
+      );
+    } finally {
+      setPhotoBusy(false);
     }
+  }
 
+  async function primary(id: string) {
+    try {
+      setPhotoError('');
+      setPhotoBusy(true);
 
-    async function refreshPhotos() {
+      await api(`/photos/${id}/primary`, {
+        method: 'PATCH'
+      });
 
-        const profile =
-            await api<ProfileDetail>(
-                '/profile/me'
-            );
-
-        setPhotos(
-            profile.photos ?? []
-        );
-
+      await refreshPhotos();
+    } catch (e) {
+      setPhotoError(
+        e instanceof Error ? e.message : 'Unable to set primary photo.'
+      );
+    } finally {
+      setPhotoBusy(false);
     }
+  }
 
+  async function remove(id: string) {
+    if (!confirm('Delete this photo?')) return;
 
-    async function upload(
-        file: File
-    ) {
+    try {
+      setPhotoError('');
+      setPhotoBusy(true);
 
-        setPhotoError('');
+      await api(`/photos/${id}`, {
+        method: 'DELETE'
+      });
 
-        if (photos.length >= 6) {
-
-            setPhotoError(
-                'You can upload a maximum of 6 photos.'
-            );
-
-            return;
-        }
-
-
-        try {
-
-            setPhotoBusy(true);
-
-
-            const formData =
-                new FormData();
-
-
-            formData.append(
-                'file',
-                file
-            );
-
-
-            await api(
-                '/photos',
-                {
-                    method: 'POST',
-                    body: formData
-                }
-            );
-
-
-            await refreshPhotos();
-
-        } catch (e) {
-
-            setPhotoError(
-                e instanceof Error
-                    ? e.message
-                    : 'Unable to upload photo.'
-            );
-
-        } finally {
-
-            setPhotoBusy(false);
-
-        }
-
+      await refreshPhotos();
+    } catch (e) {
+      setPhotoError(
+        e instanceof Error ? e.message : 'Unable to delete photo.'
+      );
+    } finally {
+      setPhotoBusy(false);
     }
+  }
 
+  async function changePhotoVisibility(id: string, visibility: string) {
+    try {
+      setPhotoError('');
+      setPhotoBusy(true);
 
-    async function primary(
-        id: string
-    ) {
+      await api(
+        `/photos/${id}/visibility?visibility=${encodeURIComponent(visibility)}`,
+        { method: 'PATCH' }
+      );
 
-        try {
-
-            setPhotoError('');
-            setPhotoBusy(true);
-
-
-            await api(
-                `/photos/${id}/primary`,
-                {
-                    method: 'PATCH'
-                }
-            );
-
-
-            await refreshPhotos();
-
-        } catch (e) {
-
-            setPhotoError(
-                e instanceof Error
-                    ? e.message
-                    : 'Unable to set primary photo.'
-            );
-
-        } finally {
-
-            setPhotoBusy(false);
-
-        }
-
+      await refreshPhotos();
+    } catch (e) {
+      setPhotoError(
+        e instanceof Error
+          ? e.message
+          : 'Unable to update photo visibility.'
+      );
+    } finally {
+      setPhotoBusy(false);
     }
+  }
 
+  async function movePhoto(index: number, direction: -1 | 1) {
+    const target = index + direction;
 
-    async function remove(
-        id: string
-    ) {
+    if (target < 0 || target >= photos.length) return;
 
-        const shouldDelete =
-            confirm(
-                'Delete this photo?'
-            );
+    const reordered = [...photos];
 
+    [reordered[index], reordered[target]] = [
+      reordered[target],
+      reordered[index]
+    ];
 
-        if (!shouldDelete) {
-            return;
+    try {
+      setPhotoError('');
+      setPhotoBusy(true);
+
+      const updated = await api<ProfileDetail['photos']>(
+        '/photos/reorder',
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            photoIds: reordered.map(photo => photo.id)
+          })
         }
+      );
 
-
-        try {
-
-            setPhotoError('');
-            setPhotoBusy(true);
-
-
-            await api(
-                `/photos/${id}`,
-                {
-                    method: 'DELETE'
-                }
-            );
-
-
-            await refreshPhotos();
-
-        } catch (e) {
-
-            setPhotoError(
-                e instanceof Error
-                    ? e.message
-                    : 'Unable to delete photo.'
-            );
-
-        } finally {
-
-            setPhotoBusy(false);
-
-        }
-
+      setPhotos(updated);
+    } catch (e) {
+      setPhotoError(
+        e instanceof Error ? e.message : 'Unable to reorder photos.'
+      );
+    } finally {
+      setPhotoBusy(false);
     }
+  }
 
+  const primaryPhoto = useMemo(
+    () => photos.find(photo => photo.primary) ?? photos[0],
+    [photos]
+  );
 
-    async function changePhotoVisibility(
-        id: string,
-        visibility: string
-    ) {
+  const location = [form.city, form.state, form.country]
+    .filter(Boolean)
+    .join(', ');
 
-        try {
+  const headline = [form.occupation, form.education]
+    .filter(Boolean)
+    .join(' · ');
 
-            setPhotoError('');
-            setPhotoBusy(true);
-
-
-            await api(
-                `/photos/${id}/visibility?visibility=${encodeURIComponent(
-                    visibility
-                )}`,
-                {
-                    method: 'PATCH'
-                }
-            );
-
-
-            await refreshPhotos();
-
-        } catch (e) {
-
-            setPhotoError(
-                e instanceof Error
-                    ? e.message
-                    : 'Unable to update photo visibility.'
-            );
-
-        } finally {
-
-            setPhotoBusy(false);
-
-        }
-
-    }
-
-
-    async function movePhoto(
-        index: number,
-        direction: -1 | 1
-    ) {
-
-        const target =
-            index + direction;
-
-
-        if (
-            target < 0 ||
-            target >= photos.length
-        ) {
-
-            return;
-
-        }
-
-
-        const reordered =
-            [...photos];
-
-
-        [
-            reordered[index],
-            reordered[target]
-        ] = [
-                reordered[target],
-                reordered[index]
-            ];
-
-
-        try {
-
-            setPhotoError('');
-            setPhotoBusy(true);
-
-
-            const updated =
-                await api<
-                    ProfileDetail['photos']
-                >(
-                    '/photos/reorder',
-                    {
-                        method: 'PATCH',
-
-                        body:
-                            JSON.stringify({
-                                photoIds:
-                                    reordered.map(
-                                        photo =>
-                                            photo.id
-                                    )
-                            })
-                    }
-                );
-
-
-            setPhotos(updated);
-
-        } catch (e) {
-
-            setPhotoError(
-                e instanceof Error
-                    ? e.message
-                    : 'Unable to reorder photos.'
-            );
-
-        } finally {
-
-            setPhotoBusy(false);
-
-        }
-
-    }
-
-
+  if (loading) {
     return (
+      <AppShell title="My profile" subtitle="Build a profile that feels like you.">
+        <div className="ss-profile-loading">
+          <div className="spinner" />
+          <span>Loading your profile...</span>
+        </div>
+      </AppShell>
+    );
+  }
 
-        <AppShell
-            title="My profile"
-            subtitle="Keep your information current so matches can understand who you are."
-        >
+  return (
+    <AppShell
+      title="My profile"
+      subtitle="Create a profile that helps the right person understand who you are."
+    >
+      <form className="ss-profile-page" onSubmit={save}>
 
-            <div className="profile-editor">
+        <section className="ss-profile-hero">
+          <div className="ss-profile-hero-photo">
+            {primaryPhoto ? (
+              <SecureImage
+                path={primaryPhoto.url}
+                alt={form.displayName || 'Profile photo'}
+              />
+            ) : (
+              <div className="ss-profile-avatar-placeholder">
+                {(form.displayName || 'S').charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
 
+          <div className="ss-profile-hero-copy">
+            <div className="ss-profile-kicker">YOUR MATRIMONY PROFILE</div>
 
-                {/* ========================= */}
-                {/* PROFILE DETAILS */}
-                {/* ========================= */}
+            <div className="ss-profile-name-row">
+              <h2>{form.displayName || 'Complete your profile'}</h2>
 
-
-                <form
-                    className="panel form"
-                    onSubmit={save}
+              {emailVerified && (
+                <span
+                  className="ss-profile-verified"
+                  title="Email verified"
                 >
-
-                    <div className="panel-head">
-
-                        <h2>
-                            Profile details
-                        </h2>
-
-
-                        <button
-                            className="primary-btn"
-                            type="submit"
-                        >
-                            Save profile
-                        </button>
-
-                    </div>
-
-
-                    <div className="form-grid">
-
-
-                        <Field
-                            label="Display name"
-                            value={
-                                form.displayName
-                            }
-                            onChange={value =>
-                                set(
-                                    'displayName',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Date of birth"
-                            type="date"
-                            value={
-                                form.dateOfBirth
-                            }
-                            onChange={value =>
-                                set(
-                                    'dateOfBirth',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Select
-                            label="Gender"
-                            value={
-                                form.gender ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'gender',
-                                    value
-                                )
-                            }
-                            options={[
-                                '',
-                                'MALE',
-                                'FEMALE',
-                                'NON_BINARY',
-                                'OTHER'
-                            ]}
-                        />
-
-
-                        <Field
-                            label="Height (cm)"
-                            type="number"
-                            value={
-                                form.heightCm ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'heightCm',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Marital status"
-                            value={
-                                form.maritalStatus ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'maritalStatus',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Mother tongue"
-                            value={
-                                form.motherTongue ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'motherTongue',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Religion"
-                            value={
-                                form.religion ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'religion',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Community"
-                            value={
-                                form.community ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'community',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Country"
-                            value={
-                                form.country ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'country',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="State"
-                            value={
-                                form.state ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'state',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="City"
-                            value={
-                                form.city ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'city',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Education"
-                            value={
-                                form.education ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'education',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Occupation"
-                            value={
-                                form.occupation ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'occupation',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Income range"
-                            value={
-                                form.incomeRange ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'incomeRange',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Diet"
-                            value={
-                                form.diet ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'diet',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Smoking"
-                            value={
-                                form.smoking ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'smoking',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Drinking"
-                            value={
-                                form.drinking ?? ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'drinking',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Field
-                            label="Profile created by"
-                            value={
-                                form.profileCreatedBy ??
-                                ''
-                            }
-                            onChange={value =>
-                                set(
-                                    'profileCreatedBy',
-                                    value
-                                )
-                            }
-                        />
-
-
-                        <Select
-                            label="Profile visibility"
-                            value={
-                                form.visibility ??
-                                'PUBLIC'
-                            }
-                            onChange={value =>
-                                set(
-                                    'visibility',
-                                    value
-                                )
-                            }
-                            options={[
-                                'PUBLIC',
-                                'MEMBERS',
-                                'HIDDEN'
-                            ]}
-                        />
-
-
-                        <div className="field full">
-
-                            <label>
-                                About me
-                            </label>
-
-
-                            <textarea
-                                maxLength={3000}
-                                value={
-                                    form.about ?? ''
-                                }
-                                onChange={e =>
-                                    set(
-                                        'about',
-                                        e.target.value
-                                    )
-                                }
-                            />
-
-                        </div>
-
-                    </div>
-
-
-                    {msg && (
-
-                        <div className="form-message success">
-                            {msg}
-                        </div>
-
-                    )}
-
-                </form>
-
-
-
-                {/* ========================= */}
-                {/* PHOTO MANAGER */}
-                {/* ========================= */}
-
-
-                <aside className="panel">
-
-                    <div className="panel-head">
-
-                        <div>
-
-                            <h3>
-                                Photos
-                            </h3>
-
-
-                            <p className="muted">
-                                {photos.length}/6 photos
-                                {' · '}
-                                JPEG, PNG or WebP
-                                {' · '}
-                                up to 10 MB
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    {photoError && (
-
-                        <div className="form-message error">
-
-                            {photoError}
-
-                        </div>
-
-                    )}
-
-
-                    <label
-                        className="secondary-btn"
-                        style={{
-                            display: 'block',
-                            textAlign: 'center',
-                            marginBottom: 14,
-
-                            opacity:
-                                photos.length >= 6 ||
-                                    photoBusy
-                                    ? 0.5
-                                    : 1,
-
-                            cursor:
-                                photos.length >= 6 ||
-                                    photoBusy
-                                    ? 'not-allowed'
-                                    : 'pointer'
-                        }}
-                    >
-
-                        {photoBusy
-                            ? 'Working...'
-                            : photos.length >= 6
-                                ? 'Maximum 6 photos'
-                                : 'Add photo'}
-
-
-                        <input
-                            type="file"
-
-                            accept="image/jpeg,image/png,image/webp"
-
-                            hidden
-
-                            disabled={
-                                photos.length >= 6 ||
-                                photoBusy
-                            }
-
-                            onChange={
-                                async e => {
-
-                                    const file =
-                                        e.target
-                                            .files?.[0];
-
-
-                                    if (file) {
-
-                                        await upload(
-                                            file
-                                        );
-
-                                    }
-
-
-                                    e.target.value = '';
-
-                                }
-                            }
-                        />
-
-                    </label>
-
-
-
-                    <div className="photo-grid">
-
-                        {photos.map(
-                            (photo, index) => (
-
-                                <div
-                                    className="photo-tile"
-                                    key={photo.id}
-                                >
-
-
-                                    {/* PHOTO */}
-
-
-                                    <div
-                                        style={{
-                                            position:
-                                                'relative'
-                                        }}
-                                    >
-
-                                        <SecureImage
-                                            path={photo.url}
-                                            alt={
-                                                `Profile photo ${index + 1
-                                                }`
-                                            }
-                                        />
-
-
-                                        {photo.primary && (
-
-                                            <span
-                                                style={{
-                                                    position:
-                                                        'absolute',
-
-                                                    top: 8,
-                                                    left: 8,
-
-                                                    background:
-                                                        'white',
-
-                                                    padding:
-                                                        '4px 8px',
-
-                                                    borderRadius:
-                                                        20,
-
-                                                    fontSize:
-                                                        12,
-
-                                                    fontWeight:
-                                                        700
-                                                }}
-                                            >
-
-                                                ★ Primary
-
-                                            </span>
-
-                                        )}
-
-                                    </div>
-
-
-
-                                    {/* PRIMARY + ORDER */}
-
-
-                                    <div className="photo-controls">
-
-                                        <button
-                                            type="button"
-
-                                            disabled={
-                                                photo.primary ||
-                                                photoBusy
-                                            }
-
-                                            onClick={() =>
-                                                primary(
-                                                    photo.id
-                                                )
-                                            }
-                                        >
-
-                                            {photo.primary
-                                                ? 'Primary'
-                                                : 'Make primary'}
-
-                                        </button>
-
-
-                                        <button
-                                            type="button"
-
-                                            title="Move left"
-
-                                            disabled={
-                                                index === 0 ||
-                                                photoBusy
-                                            }
-
-                                            onClick={() =>
-                                                movePhoto(
-                                                    index,
-                                                    -1
-                                                )
-                                            }
-                                        >
-
-                                            ←
-
-                                        </button>
-
-
-                                        <button
-                                            type="button"
-
-                                            title="Move right"
-
-                                            disabled={
-                                                index ===
-                                                photos.length -
-                                                1 ||
-                                                photoBusy
-                                            }
-
-                                            onClick={() =>
-                                                movePhoto(
-                                                    index,
-                                                    1
-                                                )
-                                            }
-                                        >
-
-                                            →
-
-                                        </button>
-
-                                    </div>
-
-
-
-                                    {/* VISIBILITY */}
-
-
-                                    <div
-                                        style={{
-                                            marginTop: 8
-                                        }}
-                                    >
-
-                                        <label
-                                            className="muted"
-
-                                            style={{
-                                                display:
-                                                    'block',
-
-                                                marginBottom:
-                                                    4
-                                            }}
-                                        >
-
-                                            Who can see this photo?
-
-                                        </label>
-
-
-                                        <select
-                                            value={
-                                                photo.visibility
-                                            }
-
-                                            disabled={
-                                                photoBusy
-                                            }
-
-                                            onChange={e =>
-                                                changePhotoVisibility(
-                                                    photo.id,
-                                                    e.target.value
-                                                )
-                                            }
-
-                                            style={{
-                                                width: '100%'
-                                            }}
-                                        >
-
-                                            <option value="PUBLIC">
-                                                Everyone
-                                            </option>
-
-
-                                            <option value="CONNECTIONS">
-                                                Connections only
-                                            </option>
-
-
-                                            <option value="PRIVATE">
-                                                Only me
-                                            </option>
-
-                                        </select>
-
-                                    </div>
-
-
-
-                                    {/* DELETE */}
-
-
-                                    <button
-                                        type="button"
-
-                                        className="danger-btn"
-
-                                        disabled={
-                                            photoBusy
-                                        }
-
-                                        style={{
-                                            width: '100%',
-                                            marginTop: 8
-                                        }}
-
-                                        onClick={() =>
-                                            remove(
-                                                photo.id
-                                            )
-                                        }
-                                    >
-
-                                        Delete
-
-                                    </button>
-
-                                </div>
-
-                            )
-                        )}
-
-                    </div>
-
-
-                    {!photos.length && (
-
-                        <div className="empty">
-
-                            No photos uploaded yet.
-
-                        </div>
-
-                    )}
-
-                </aside>
-
+                  ✓
+                </span>
+              )}
             </div>
 
-        </AppShell>
+            {headline && (
+              <p className="ss-profile-headline">{headline}</p>
+            )}
 
-    );
+            {location && (
+              <p className="ss-profile-location">⌖ {location}</p>
+            )}
 
-}
+            <div className="ss-profile-quick-facts">
+              {form.age && <span>{form.age} yrs</span>}
+              {form.heightCm && <span>{form.heightCm} cm</span>}
+              {form.religion && <span>{form.religion}</span>}
+              {form.motherTongue && <span>{form.motherTongue}</span>}
+            </div>
+          </div>
 
+          <div className="ss-profile-completion">
+            <div className="ss-profile-completion-top">
+              <span>Profile strength</span>
+              <strong>{completion}%</strong>
+            </div>
 
+            <div className="ss-profile-progress">
+              <span style={{ width: `${Math.min(completion, 100)}%` }} />
+            </div>
 
-/* ========================================================= */
-/* FORM FIELD */
-/* ========================================================= */
+            <p>
+              {completion >= 90
+                ? 'Your profile is looking great.'
+                : 'Complete more details to help compatible matches understand you better.'}
+            </p>
 
+            <button
+              className="primary-btn ss-profile-save-top"
+              type="submit"
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : 'Save changes'}
+            </button>
+          </div>
+        </section>
 
-function Field({
-    label,
-    value,
-    onChange,
-    type = 'text'
-}: {
-    label: string;
-    value: string | number;
-    onChange: (
-        value: string
-    ) => void;
-    type?: string;
-}) {
+        {msg && (
+          <div className={`ss-profile-message ${msgType}`}>
+            {msg}
+          </div>
+        )}
 
-    return (
+        <section className="ss-profile-card ss-profile-photo-section">
+          <SectionHeader
+            eyebrow="PHOTOS"
+            title="Your photo gallery"
+            description="Add photos that represent you naturally. Choose a primary photo and control who can see each image."
+          />
 
-        <div className="field">
+          <div className="ss-profile-photo-summary">
+            <strong>{photos.length}/6 photos</strong>
+            <span>JPEG, PNG or WebP · up to 10 MB</span>
+          </div>
 
-            <label>
-                {label}
-            </label>
+          {photoError && (
+            <div className="ss-profile-message error">
+              {photoError}
+            </div>
+          )}
 
+          <div className="ss-profile-gallery">
+            {photos.map((photo, index) => (
+              <article
+                className={`ss-profile-photo-card ${
+                  photo.primary ? 'is-primary' : ''
+                }`}
+                key={photo.id}
+              >
+                <div className="ss-profile-photo-image">
+                  <SecureImage
+                    path={photo.url}
+                    alt={`Profile photo ${index + 1}`}
+                  />
 
-            <input
-                type={type}
+                  {photo.primary && (
+                    <span className="ss-profile-primary-badge">
+                      ★ Primary
+                    </span>
+                  )}
 
-                value={
-                    value ?? ''
-                }
+                  <span className="ss-profile-photo-number">
+                    {index + 1}
+                  </span>
+                </div>
 
-                onChange={e =>
-                    onChange(
-                        e.target.value
-                    )
-                }
+                <div className="ss-profile-photo-actions">
+                  <button
+                    type="button"
+                    className="ss-profile-small-button"
+                    disabled={photo.primary || photoBusy}
+                    onClick={() => primary(photo.id)}
+                  >
+                    {photo.primary ? 'Primary photo' : 'Make primary'}
+                  </button>
+
+                  <div className="ss-profile-order-buttons">
+                    <button
+                      type="button"
+                      title="Move left"
+                      disabled={index === 0 || photoBusy}
+                      onClick={() => movePhoto(index, -1)}
+                    >
+                      ←
+                    </button>
+
+                    <button
+                      type="button"
+                      title="Move right"
+                      disabled={index === photos.length - 1 || photoBusy}
+                      onClick={() => movePhoto(index, 1)}
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+
+                <label className="ss-profile-photo-visibility">
+                  <span>Photo visibility</span>
+                  <select
+                    value={photo.visibility}
+                    disabled={photoBusy}
+                    onChange={e =>
+                      changePhotoVisibility(photo.id, e.target.value)
+                    }
+                  >
+                    <option value="PUBLIC">Everyone</option>
+                    <option value="CONNECTIONS">Connections only</option>
+                    <option value="PRIVATE">Only me</option>
+                  </select>
+                </label>
+
+                <button
+                  type="button"
+                  className="ss-profile-delete-photo"
+                  disabled={photoBusy}
+                  onClick={() => remove(photo.id)}
+                >
+                  Delete photo
+                </button>
+              </article>
+            ))}
+
+            {photos.length < 6 && (
+              <label
+                className={`ss-profile-add-photo ${
+                  photoBusy ? 'disabled' : ''
+                }`}
+              >
+                <span className="ss-profile-add-icon">＋</span>
+                <strong>{photoBusy ? 'Working...' : 'Add a photo'}</strong>
+                <small>
+                  {photos.length
+                    ? `${6 - photos.length} spots remaining`
+                    : 'Start with a clear primary photo'}
+                </small>
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  hidden
+                  disabled={photoBusy}
+                  onChange={async e => {
+                    const file = e.target.files?.[0];
+                    if (file) await upload(file);
+                    e.target.value = '';
+                  }}
+                />
+              </label>
+            )}
+          </div>
+        </section>
+
+        <section className="ss-profile-card">
+          <SectionHeader
+            eyebrow="INTRODUCTION"
+            title="About me"
+            description="Write a warm introduction that gives potential matches a sense of your personality, values and interests."
+          />
+
+          <label className="ss-profile-about">
+            <textarea
+              maxLength={3000}
+              value={form.about ?? ''}
+              placeholder="Share a little about yourself, your interests, values, career, family and what matters to you..."
+              onChange={e => set('about', e.target.value)}
+            />
+            <span>{(form.about ?? '').length}/3000</span>
+          </label>
+        </section>
+
+        <div className="ss-profile-section-grid">
+
+          <section className="ss-profile-card">
+            <SectionHeader
+              eyebrow="PERSONAL"
+              title="Basic details"
+              description="The essentials people usually look for first."
             />
 
+            <div className="ss-profile-fields">
+              <Field
+                label="Display name"
+                value={form.displayName}
+                onChange={v => set('displayName', v)}
+              />
+
+              <Field
+                label="Date of birth"
+                type="date"
+                value={form.dateOfBirth}
+                onChange={v => set('dateOfBirth', v)}
+              />
+
+              <Select
+                label="Gender"
+                value={form.gender ?? ''}
+                onChange={v => set('gender', v)}
+                options={[
+                  '',
+                  'MALE',
+                  'FEMALE',
+                  'NON_BINARY',
+                  'OTHER'
+                ]}
+              />
+
+              <Field
+                label="Height (cm)"
+                type="number"
+                value={form.heightCm ?? ''}
+                onChange={v => set('heightCm', v)}
+              />
+
+              <Field
+                label="Marital status"
+                value={form.maritalStatus ?? ''}
+                onChange={v => set('maritalStatus', v)}
+              />
+
+              <Field
+                label="Profile created by"
+                value={form.profileCreatedBy ?? ''}
+                onChange={v => set('profileCreatedBy', v)}
+              />
+            </div>
+          </section>
+
+          <section className="ss-profile-card">
+            <SectionHeader
+              eyebrow="BACKGROUND"
+              title="Religion & community"
+              description="Share the cultural details that are important to you."
+            />
+
+            <div className="ss-profile-fields">
+              <Field
+                label="Religion"
+                value={form.religion ?? ''}
+                onChange={v => set('religion', v)}
+              />
+
+              <Field
+                label="Community"
+                value={form.community ?? ''}
+                onChange={v => set('community', v)}
+              />
+
+              <Field
+                label="Mother tongue"
+                value={form.motherTongue ?? ''}
+                onChange={v => set('motherTongue', v)}
+              />
+            </div>
+          </section>
+
+          <section className="ss-profile-card">
+            <SectionHeader
+              eyebrow="CAREER"
+              title="Education & career"
+              description="Tell matches about your professional and academic journey."
+            />
+
+            <div className="ss-profile-fields">
+              <Field
+                label="Education"
+                value={form.education ?? ''}
+                onChange={v => set('education', v)}
+              />
+
+              <Field
+                label="Occupation"
+                value={form.occupation ?? ''}
+                onChange={v => set('occupation', v)}
+              />
+
+              <Field
+                label="Income range"
+                value={form.incomeRange ?? ''}
+                onChange={v => set('incomeRange', v)}
+              />
+            </div>
+          </section>
+
+          <section className="ss-profile-card">
+            <SectionHeader
+              eyebrow="LOCATION"
+              title="Where I live"
+              description="Your location helps us surface more relevant matches."
+            />
+
+            <div className="ss-profile-fields">
+              <Field
+                label="Country"
+                value={form.country ?? ''}
+                onChange={v => set('country', v)}
+              />
+
+              <Field
+                label="State"
+                value={form.state ?? ''}
+                onChange={v => set('state', v)}
+              />
+
+              <Field
+                label="City"
+                value={form.city ?? ''}
+                onChange={v => set('city', v)}
+              />
+            </div>
+          </section>
+
+          <section className="ss-profile-card">
+            <SectionHeader
+              eyebrow="LIFESTYLE"
+              title="Lifestyle"
+              description="A few everyday preferences can make compatibility easier to understand."
+            />
+
+            <div className="ss-profile-fields">
+              <Field
+                label="Diet"
+                value={form.diet ?? ''}
+                onChange={v => set('diet', v)}
+              />
+
+              <Field
+                label="Smoking"
+                value={form.smoking ?? ''}
+                onChange={v => set('smoking', v)}
+              />
+
+              <Field
+                label="Drinking"
+                value={form.drinking ?? ''}
+                onChange={v => set('drinking', v)}
+              />
+            </div>
+          </section>
+
+          <section className="ss-profile-card ss-profile-privacy-card">
+            <SectionHeader
+              eyebrow="PRIVACY"
+              title="Profile visibility"
+              description="You stay in control of who can discover your profile."
+            />
+
+            <Select
+              label="Who can discover my profile?"
+              value={form.visibility ?? 'PUBLIC'}
+              onChange={v => set('visibility', v)}
+              options={['PUBLIC', 'MEMBERS', 'HIDDEN']}
+              labels={{
+                PUBLIC: 'Everyone',
+                MEMBERS: 'SoulSync members',
+                HIDDEN: 'Hidden'
+              }}
+            />
+
+            <div className="ss-profile-privacy-note">
+              <span>⌾</span>
+              <p>
+                Photo privacy is managed separately for each image in your
+                gallery.
+              </p>
+            </div>
+          </section>
         </div>
 
-    );
+        <section className="ss-profile-save-bar">
+          <div>
+            <strong>Ready to update your profile?</strong>
+            <span>
+              Your changes become part of the profile other members see.
+            </span>
+          </div>
 
+          <button
+            className="primary-btn"
+            type="submit"
+            disabled={saving}
+          >
+            {saving ? 'Saving profile...' : 'Save profile'}
+          </button>
+        </section>
+
+      </form>
+    </AppShell>
+  );
 }
 
+function SectionHeader({
+  eyebrow,
+  title,
+  description
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="ss-profile-section-head">
+      <span>{eyebrow}</span>
+      <h3>{title}</h3>
+      <p>{description}</p>
+    </div>
+  );
+}
 
-
-/* ========================================================= */
-/* SELECT FIELD */
-/* ========================================================= */
-
+function Field({
+  label,
+  value,
+  onChange,
+  type = 'text'
+}: {
+  label: string;
+  value: string | number;
+  onChange: (value: string) => void;
+  type?: string;
+}) {
+  return (
+    <label className="ss-profile-field">
+      <span>{label}</span>
+      <input
+        type={type}
+        value={value ?? ''}
+        onChange={e => onChange(e.target.value)}
+      />
+    </label>
+  );
+}
 
 function Select({
-    label,
-    value,
-    onChange,
-    options
+  label,
+  value,
+  onChange,
+  options,
+  labels = {}
 }: {
-    label: string;
-    value: string;
-    onChange: (
-        value: string
-    ) => void;
-    options: string[];
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
+  labels?: Record<string, string>;
 }) {
+  return (
+    <label className="ss-profile-field">
+      <span>{label}</span>
 
-    return (
+      <select
+        value={value ?? ''}
+        onChange={e => onChange(e.target.value)}
+      >
+        {options.map(option => (
+          <option key={option || 'blank'} value={option}>
+            {option ? labels[option] ?? pretty(option) : 'Select'}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
-        <div className="field">
-
-            <label>
-                {label}
-            </label>
-
-
-            <select
-                value={
-                    value ?? ''
-                }
-
-                onChange={e =>
-                    onChange(
-                        e.target.value
-                    )
-                }
-            >
-
-                {options.map(
-                    option => (
-
-                        <option
-                            key={
-                                option || 'blank'
-                            }
-                            value={option}
-                        >
-
-                            {option ||
-                                'Select'}
-
-                        </option>
-
-                    )
-                )}
-
-            </select>
-
-        </div>
-
-    );
-
+function pretty(value: string) {
+  return value
+    .toLowerCase()
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, letter => letter.toUpperCase());
 }
