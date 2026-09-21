@@ -99,8 +99,31 @@ export default function Settings() {
       title="Settings & privacy"
       subtitle="Manage your account, security, and privacy controls."
     >
-      <div className="dashboard-grid">
-        <section className="panel">
+      
+      <section className="ss-settings-overview">
+        <div className="ss-settings-overview-copy">
+          <span className="ss-settings-kicker">ACCOUNT &amp; PRIVACY</span>
+          <h2>Manage your SoulSync account</h2>
+          <p>
+            Review your account status, safety controls, and
+            profile visibility from one place.
+          </p>
+        </div>
+
+        <div className="ss-settings-overview-badges">
+          <span className="ss-settings-overview-badge">
+            <strong>Secure</strong>
+            <small>Email verified</small>
+          </span>
+          <span className="ss-settings-overview-badge">
+            <strong>Private</strong>
+            <small>You control access</small>
+          </span>
+        </div>
+      </section>
+
+<div className="dashboard-grid ss-settings-top">
+        <section className="panel ss-settings-account">
           <div className="panel-head">
             <h2>Account</h2>
             <span className={`status ${account?.status}`}>
@@ -143,7 +166,7 @@ export default function Settings() {
           </button>
         </section>
 
-        <section className="panel">
+        <section className="panel ss-settings-verification">
           <h2>Account verification</h2>
 
           <p className="muted">
@@ -172,7 +195,7 @@ export default function Settings() {
         </section>
       </div>
 
-      <section className="panel section-gap">
+      <section className="panel section-gap ss-settings-blocked">
         <div className="panel-head">
           <h2>Blocked members</h2>
           <span className="muted">Safety controls</span>
@@ -206,7 +229,7 @@ export default function Settings() {
       </section>
 
       {premiumCanViewVisitors ? (
-<section className="panel section-gap">
+<section className="panel section-gap ss-settings-viewers">
         <div className="panel-head">
           <h2>Recent profile viewers</h2>
           <span className="muted">
