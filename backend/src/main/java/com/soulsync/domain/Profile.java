@@ -28,7 +28,7 @@ public class Profile {
   private String diet;
   private String smoking;
   private String drinking;
-  @Column(length=3000) private String about;
+  @Column(length = 1000) private String hobbies; @Column(length=3000) private String about;
   @Column(name="profile_created_by") private String profileCreatedBy;
   @Enumerated(EnumType.STRING) @Column(nullable=false) @Builder.Default private ProfileVisibility visibility=ProfileVisibility.MEMBERS;
   @Column(name="completion_percent", nullable=false) @Builder.Default private int completionPercent=10;

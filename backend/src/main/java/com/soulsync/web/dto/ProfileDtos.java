@@ -56,7 +56,7 @@ public final class ProfileDtos {
       String diet,
       String smoking,
       String drinking,
-      String about,
+      String hobbies,String about,
       String profileCreatedBy,
       ProfileVisibility visibility,
       int completionPercent,
@@ -83,7 +83,7 @@ public final class ProfileDtos {
       @Size(max = 80) String diet,
       @Size(max = 80) String smoking,
       @Size(max = 80) String drinking,
-      @Size(max = 3000) String about,
+      @Size(max = 3000) String hobbies,String about,
       @Size(max = 80) String profileCreatedBy,
       ProfileVisibility visibility
   ) {}
