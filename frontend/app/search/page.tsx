@@ -403,7 +403,7 @@ export default function Search() {
           </div>
 
           {advanced && (
-            {premiumCanUseAdvancedSearch ? (
+            premiumCanUseAdvancedSearch ? (
 <div className="ss-search-advanced">
               <Field
                 label="Country"
@@ -473,7 +473,7 @@ export default function Search() {
                   View Premium plans
                 </button>
               </div>
-            )}
+            )
           )}
         </form>
 
