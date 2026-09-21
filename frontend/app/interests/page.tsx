@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import AppShell from '@/components/AppShell';
 import { api } from '@/lib/api';
-import type { Interest, Conversation } from '@/lib/types';
+import type { Conversation, Interest } from '@/lib/types';
 
 export default function Interests() {
   const router = useRouter();
@@ -19,18 +19,18 @@ export default function Interests() {
 
   async function load() {
     try {
-      const [r, s] = await Promise.all([
+      const [receivedInterests, sentInterests] = await Promise.all([
         api<Interest[]>('/interests/received'),
         api<Interest[]>('/interests/sent'),
       ]);
 
-      setReceived(r);
-      setSent(s);
+      setReceived(receivedInterests);
+      setSent(sentInterests);
 
       const ids = [
         ...new Set([
-          ...r.map(x => x.senderId),
-          ...s.map(x => x.receiverId),
+          ...receivedInterests.map(interest => interest.senderId),
+          ...sentInterests.map(interest => interest.receiverId),
         ]),
       ];
 
@@ -65,6 +65,36 @@ export default function Interests() {
     void load();
   }, []);
 
+  async function openConversation(
+    targetUserId: string,
+    interestId: string
+  ) {
+    setProcessing(interestId);
+    setError('');
+
+    try {
+      const conversation = await api<Conversation>(
+        `/conversations/with/${targetUserId}`,
+        {
+          method: 'POST',
+        }
+      );
+
+      router.push(
+        `/messages?conversation=${encodeURIComponent(
+          conversation.id
+        )}`
+      );
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : 'Unable to open the conversation.'
+      );
+      setProcessing(null);
+    }
+  }
+
   async function respond(
     interest: Interest,
     action: 'accept' | 'decline' | 'withdraw'
@@ -77,68 +107,18 @@ export default function Interests() {
         method: 'PATCH',
       });
 
-      /*
-       * When an interest is accepted, the backend creates/
-       * exposes the conversation. Fetch conversations and
-       * locate the one belonging to the sender.
-       */
       if (action === 'accept') {
-        const conversations =
-          await api<Conversation[]>('/conversations');
+        const conversation = await api<Conversation>(
+          `/conversations/with/${interest.senderId}`,
+          {
+            method: 'POST',
+          }
+        );
 
-        const conversation = conversations.find(c => {
-          const item = c as Conversation & {
-            otherUserId?: string;
-          };
-
-          return item.otherUserId === interest.senderId;
-        });
-
-        if (conversation) {
-          router.push(
-            `/messages?conversation=${encodeURIComponent(
-              conversation.id
-            )}`
-          );
-
-          return;
-        }
-
-        /*
-         * Very small fallback in case the conversation endpoint
-         * needs a moment before returning the newly created chat.
-         */
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        const retry =
-          await api<Conversation[]>('/conversations');
-
-        const retryConversation = retry.find(c => {
-          const item = c as Conversation & {
-            otherUserId?: string;
-          };
-
-          return item.otherUserId === interest.senderId;
-        });
-
-        if (retryConversation) {
-          router.push(
-            `/messages?conversation=${encodeURIComponent(
-              retryConversation.id
-            )}`
-          );
-
-          return;
-        }
-
-        /*
-         * Acceptance still succeeded even if the conversation
-         * could not immediately be resolved.
-         */
-        await load();
-
-        setError(
-          'Interest accepted. Your conversation is available from Messages.'
+        router.push(
+          `/messages?conversation=${encodeURIComponent(
+            conversation.id
+          )}`
         );
 
         return;
@@ -194,8 +174,7 @@ export default function Interests() {
                       <Link
                         href={`/profile/${interest.senderId}`}
                       >
-                        {names[interest.senderId] ??
-                          'Member'}
+                        {names[interest.senderId] ?? 'Member'}
                       </Link>
                     </h4>
 
@@ -223,6 +202,7 @@ export default function Interests() {
                     {interest.status === 'PENDING' && (
                       <>
                         <button
+                          type="button"
                           className="primary-btn"
                           disabled={
                             processing === interest.id
@@ -240,6 +220,7 @@ export default function Interests() {
                         </button>
 
                         <button
+                          type="button"
                           className="ghost-btn"
                           disabled={
                             processing === interest.id
@@ -257,12 +238,25 @@ export default function Interests() {
                     )}
 
                     {interest.status === 'ACCEPTED' && (
-                      <Link
-                        href="/messages"
+                      <button
+                        type="button"
                         className="primary-btn"
+                        disabled={
+                          processing === interest.id
+                        }
+                        onClick={() =>
+                          void openConversation(
+                            interest.senderId,
+                            interest.id
+                          )
+                        }
                       >
-                        Messages
-                      </Link>
+                        {processing === interest.id
+                          ? 'Opening...'
+                          : `Message ${names[interest.senderId] ??
+                          'member'
+                          }`}
+                      </button>
                     )}
                   </div>
                 </div>
@@ -292,8 +286,7 @@ export default function Interests() {
                       <Link
                         href={`/profile/${interest.receiverId}`}
                       >
-                        {names[interest.receiverId] ??
-                          'Member'}
+                        {names[interest.receiverId] ?? 'Member'}
                       </Link>
                     </h4>
 
@@ -320,6 +313,7 @@ export default function Interests() {
 
                     {interest.status === 'PENDING' && (
                       <button
+                        type="button"
                         className="ghost-btn"
                         disabled={
                           processing === interest.id
@@ -336,12 +330,25 @@ export default function Interests() {
                     )}
 
                     {interest.status === 'ACCEPTED' && (
-                      <Link
-                        href="/messages"
+                      <button
+                        type="button"
                         className="primary-btn"
+                        disabled={
+                          processing === interest.id
+                        }
+                        onClick={() =>
+                          void openConversation(
+                            interest.receiverId,
+                            interest.id
+                          )
+                        }
                       >
-                        Messages
-                      </Link>
+                        {processing === interest.id
+                          ? 'Opening...'
+                          : `Message ${names[interest.receiverId] ??
+                          'member'
+                          }`}
+                      </button>
                     )}
                   </div>
                 </div>
