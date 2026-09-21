@@ -5411,3 +5411,367 @@ th {
   letter-spacing: 0.04em;
 }
 
+/* SoulSync Interests Redesign */
+.ss-interests-page {
+  display: grid;
+  gap: 22px;
+}
+
+.ss-interests-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ss-interest-stat {
+  min-height: 112px;
+  padding: 20px 22px;
+  border: 1px solid rgba(127, 18, 49, 0.10);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(178, 118, 43, 0.10), transparent 42%),
+    #fff;
+  box-shadow: 0 12px 34px rgba(46, 27, 35, 0.045);
+}
+
+.ss-interest-stat span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.ss-interest-stat strong {
+  display: block;
+  color: var(--text);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.ss-interest-stat small {
+  display: block;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ss-interests-card {
+  overflow: hidden;
+  border: 1px solid rgba(45, 32, 62, 0.09);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(45, 32, 62, 0.045);
+}
+
+.ss-interests-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-end;
+  padding: 24px 26px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ss-interests-kicker {
+  display: block;
+  margin-bottom: 5px;
+  color: #8b2450;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+}
+
+.ss-interests-card-head h2 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.03em;
+}
+
+.ss-interests-card-head p {
+  max-width: 600px;
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.ss-interest-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #faf8fa;
+}
+
+.ss-interest-tabs button {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  min-width: 105px;
+  min-height: 40px;
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.ss-interest-tabs button.active {
+  background: #fff;
+  color: #7f1231;
+  box-shadow: 0 4px 14px rgba(45, 32, 62, 0.08);
+}
+
+.ss-interest-tabs button span {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(127, 18, 49, 0.09);
+  color: #7f1231;
+  font-size: 10px;
+}
+
+.ss-interest-list {
+  display: grid;
+}
+
+.ss-interest-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 26px;
+  border-bottom: 1px solid var(--line);
+  transition: background 160ms ease;
+}
+
+.ss-interest-row:last-child {
+  border-bottom: 0;
+}
+
+.ss-interest-row:hover {
+  background: #fdfafb;
+}
+
+.ss-interest-avatar {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  overflow: hidden;
+  border: 1px solid rgba(127, 18, 49, 0.12);
+  border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    rgba(127, 18, 49, 0.10),
+    rgba(178, 118, 43, 0.10)
+  );
+  color: #7f1231;
+  font-size: 18px;
+  font-weight: 850;
+}
+
+.ss-interest-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ss-interest-member {
+  min-width: 0;
+}
+
+.ss-interest-name {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ss-interest-name:hover {
+  color: #7f1231;
+}
+
+.ss-interest-member p {
+  margin: 4px 0 3px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ss-interest-member small {
+  color: #9a929d;
+  font-size: 12px;
+}
+
+.ss-interest-status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ss-interest-status-pill.accepted {
+  background: #eaf8f1;
+  color: #087f5b;
+}
+
+.ss-interest-status-pill.pending {
+  background: #fff5dc;
+  color: #9a6711;
+}
+
+.ss-interest-status-pill.declined,
+.ss-interest-status-pill.withdrawn {
+  background: #f4f1f3;
+  color: #7f747c;
+}
+
+.ss-interest-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ss-interest-actions .primary-btn,
+.ss-interest-actions .ghost-btn {
+  min-height: 38px;
+  padding: 8px 14px;
+  white-space: nowrap;
+}
+
+.ss-interest-message {
+  min-width: 98px;
+}
+
+.ss-interest-empty {
+  display: grid;
+  place-items: center;
+  padding: 52px 24px 58px;
+  text-align: center;
+}
+
+.ss-interest-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 14px;
+  border-radius: 18px;
+  background: rgba(127, 18, 49, 0.06);
+  color: #7f1231;
+  font-size: 25px;
+}
+
+.ss-interest-empty h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.ss-interest-empty p {
+  max-width: 430px;
+  margin: 8px 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ss-interests-loading {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 220px;
+  color: var(--muted);
+}
+
+.ss-interests-loading p {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .ss-interests-card-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ss-interest-tabs {
+    width: fit-content;
+  }
+
+  .ss-interest-row {
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+  }
+
+  .ss-interest-actions {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .ss-interests-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .ss-interest-stat {
+    min-height: 96px;
+  }
+
+  .ss-interests-card-head {
+    padding: 20px 18px 16px;
+  }
+
+  .ss-interest-tabs {
+    width: 100%;
+  }
+
+  .ss-interest-tabs button {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ss-interest-row {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px 18px;
+  }
+
+  .ss-interest-avatar {
+    width: 46px;
+    height: 46px;
+  }
+
+  .ss-interest-status {
+    grid-column: 2;
+  }
+
+  .ss-interest-actions {
+    grid-column: 1 / -1;
+  }
+
+  .ss-interest-actions .primary-btn,
+  .ss-interest-actions .ghost-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
