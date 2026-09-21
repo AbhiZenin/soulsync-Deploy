@@ -41,7 +41,8 @@ public class SubscriptionAccessService {
             case "UNLIMITED_INTERESTS",
                  "ADVANCED_SEARCH",
                  "VIEW_PROFILE_VISITORS",
-                 "VIEW_CONTACT" -> plan != Plan.FREE;
+                 "VIEW_CONTACT",
+                 "ENHANCED_DISCOVERY" -> plan != Plan.FREE;
 
             case "PROFILE_BOOST",
                  "VIDEO_CALL",

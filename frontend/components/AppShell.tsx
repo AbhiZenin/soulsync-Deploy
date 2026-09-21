@@ -11,6 +11,7 @@ const primaryLinks = [
   ['/interests', 'Interests'],
   ['/messages', 'Messages'],
   ['/search', 'Search'],
+  ['/discover', 'Discover+'],
 ];
 
 const moreLinks = [

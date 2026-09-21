@@ -5258,3 +5258,55 @@ th {
   font-weight: 800;
   letter-spacing: 0.08em;
 }
+
+/* SoulSync Premium Batch 3 */
+.ss-contact-card {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.ss-contact-card-locked {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(178, 118, 43, 0.10),
+      transparent 42%
+    ),
+    #fff;
+}
+
+.ss-contact-card strong {
+  display: block;
+  margin: 8px 0;
+}
+
+.ss-contact-card p {
+  margin: 6px 0 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.ss-contact-card .form-message {
+  margin-top: 12px;
+}
+
+.ss-discover-page {
+  display: grid;
+  gap: 22px;
+}
+
+.ss-discover-lock {
+  max-width: 760px;
+}
+
+.ss-discover-lock h2 {
+  margin: 10px 0 8px;
+}
+
+.ss-discover-lock .primary-btn {
+  margin-top: 8px;
+}
+
