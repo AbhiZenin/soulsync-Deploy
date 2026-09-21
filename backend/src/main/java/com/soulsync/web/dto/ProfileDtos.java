@@ -34,8 +34,7 @@ public final class ProfileDtos {
       String primaryPhoto,
       Integer matchScore,
       Instant lastActiveAt,
-      boolean emailVerified
-  ) {}
+      boolean emailVerified, boolean boosted) {}
 
   public record ProfileDetail(
       UUID userId,

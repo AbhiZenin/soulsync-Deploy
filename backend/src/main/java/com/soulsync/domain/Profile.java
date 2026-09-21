@@ -33,6 +33,9 @@ public class Profile {
   @Enumerated(EnumType.STRING) @Column(nullable=false) @Builder.Default private ProfileVisibility visibility=ProfileVisibility.MEMBERS;
   @Column(name="completion_percent", nullable=false) @Builder.Default private int completionPercent=10;
   @Column(name="last_active_at") private Instant lastActiveAt;
+
+  @Column(name = "boosted_until")
+  private Instant boostedUntil;
   @Column(name="created_at", nullable=false) private Instant createdAt;
   @Column(name="updated_at", nullable=false) private Instant updatedAt;
   @PrePersist void prePersist(){var now=Instant.now(); if(id==null) id=UUID.randomUUID(); if(createdAt==null) createdAt=now; updatedAt=now; if(lastActiveAt==null) lastActiveAt=now;}
