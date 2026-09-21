@@ -39,9 +39,9 @@ export default function Register() {
       <div>
         <p className="eyebrow">CREATE YOUR PROFILE</p>
         <h2>Serious intent deserves a better place to meet.</h2>
-        <p>Start with a secure account. We verify your email before sign-in and your phone before interests and chat.</p>
+        <p>Start with a secure account. We verify your email before sign-in so you can connect securely.</p>
       </div>
-      <p>Your email and phone number are never displayed publicly.</p>
+      <p>Your email address is never displayed publicly.</p>
     </aside>
     <main className="auth-main">
       <form className="auth-card" onSubmit={submit}>

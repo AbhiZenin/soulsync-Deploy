@@ -201,14 +201,6 @@ export default function Login() {
             relationships.
           </p>
 
-          {isDev && (
-            <div className="matrimony-demo">
-              <strong>Development demo</strong>
-              <span>
-                ananya@soulsync.dev · Password123!
-              </span>
-            </div>
-          )}
         </form>
 
         <div className="matrimony-legal">
