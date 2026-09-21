@@ -33,12 +33,22 @@ export default function Settings() {
   const [securityError, setSecurityError] = useState('');
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [views, setViews] = useState<View[]>([]);
+  const [premiumCanViewVisitors, setPremiumCanViewVisitors] = useState(false);
 
   async function load() {
     const [accountData, blockData, viewData] = await Promise.all([
       api<Account>('/account/me'),
       api<Block[]>('/blocks'),
-      api<View[]>('/profile-viewers'),
+      api<{ entitlements: string[] }>('/subscriptions/me')
+        .then(subscription => {
+          const allowed =
+            subscription.entitlements.includes('VIEW_PROFILE_VISITORS');
+          setPremiumCanViewVisitors(allowed);
+
+          return allowed
+            ? api<View[]>('/profile-viewers')
+            : Promise.resolve([] as View[]);
+        }),
     ]);
 
     setAccount(accountData);
@@ -195,7 +205,8 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="panel section-gap">
+      {premiumCanViewVisitors ? (
+<section className="panel section-gap">
         <div className="panel-head">
           <h2>Recent profile viewers</h2>
           <span className="muted">
@@ -241,6 +252,28 @@ export default function Settings() {
           )}
         </div>
       </section>
+      ) : (
+        <section className="panel section-gap ss-premium-visitors-lock">
+          <div className="panel-head">
+            <div>
+              <span className="ss-premium-lock-badge">PREMIUM</span>
+              <h2>Recent profile viewers</h2>
+            </div>
+          </div>
+          <p className="muted">
+            Upgrade to Premium to see which members have viewed your profile.
+          </p>
+          <button
+            type="button"
+            className="primary-btn"
+            onClick={() => {
+              window.location.href = '/premium';
+            }}
+          >
+            View Premium plans
+          </button>
+        </section>
+      )}
 
       <section className="panel section-gap">
         <h2>Security</h2>

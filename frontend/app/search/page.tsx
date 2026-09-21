@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useMemo, useState, useEffect } from 'react';
 import AppShell from '@/components/AppShell';
 import ProfileCard from '@/components/ProfileCard';
 import { api } from '@/lib/api';
@@ -59,6 +59,33 @@ const languages = [
 ];
 
 export default function Search() {
+  const [premiumCanUseAdvancedSearch, setPremiumCanUseAdvancedSearch] =
+    useState(false);
+  const [premiumSubscriptionReady, setPremiumSubscriptionReady] =
+    useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    api<{ entitlements: string[] }>('/subscriptions/me')
+      .then(subscription => {
+        if (!active) return;
+        setPremiumCanUseAdvancedSearch(
+          subscription.entitlements.includes('ADVANCED_SEARCH')
+        );
+      })
+      .catch(() => {
+        if (active) setPremiumCanUseAdvancedSearch(false);
+      })
+      .finally(() => {
+        if (active) setPremiumSubscriptionReady(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const [filters, setFilters] = useState<Filters>(defaults);
   const [rows, setRows] = useState<Card[]>([]);
   const [searched, setSearched] = useState(false);
@@ -376,7 +403,8 @@ export default function Search() {
           </div>
 
           {advanced && (
-            <div className="ss-search-advanced">
+            {premiumCanUseAdvancedSearch ? (
+<div className="ss-search-advanced">
               <Field
                 label="Country"
                 value={filters.country}
@@ -426,6 +454,26 @@ export default function Search() {
                 placeholder="Any occupation"
               />
             </div>
+            ) : (
+              <div className="ss-premium-search-lock">
+                <span className="ss-premium-lock-badge">PREMIUM</span>
+                <h3>Unlock advanced search</h3>
+                <p>
+                  Religion, mother tongue, education, occupation, and
+                  height filters are available with SoulSync Premium.
+                </p>
+                <button
+                  type="button"
+                  className="primary-btn"
+                  onClick={() => {
+                    window.location.href = '/premium';
+                  }}
+                  disabled={!premiumSubscriptionReady}
+                >
+                  View Premium plans
+                </button>
+              </div>
+            )}
           )}
         </form>
 

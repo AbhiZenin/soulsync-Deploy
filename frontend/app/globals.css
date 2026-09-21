@@ -5217,3 +5217,45 @@ th {
     object-fit: contain;
   }
 }
+
+/* SoulSync Premium Batch 2 */
+.ss-premium-search-lock,
+.ss-premium-visitors-lock {
+  border: 1px solid rgba(127, 18, 49, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(178, 118, 43, 0.10), transparent 38%),
+    linear-gradient(135deg, rgba(127, 18, 49, 0.045), rgba(255, 255, 255, 0.96));
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.ss-premium-search-lock {
+  margin-top: 14px;
+}
+
+.ss-premium-search-lock h3,
+.ss-premium-visitors-lock h2 {
+  margin: 8px 0;
+}
+
+.ss-premium-search-lock p,
+.ss-premium-visitors-lock p {
+  max-width: 680px;
+  margin: 0 0 16px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.ss-premium-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(178, 118, 43, 0.12);
+  color: #8a5b1c;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
