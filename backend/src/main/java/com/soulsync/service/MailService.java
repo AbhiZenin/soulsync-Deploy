@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -18,22 +19,26 @@ public class MailService {
     @Value("${soulsync.frontend-url}")
     String frontend;
 
-    @Value("${soulsync.mail-from:no-reply@soulsync.local}")
+    @Value("${soulsync.mail-from}")
     String from;
 
-    @Value("${RESEND_API_KEY:}")
-    String resendApiKey;
+    @Value("${BREVO_API_KEY:}")
+    String brevoApiKey;
 
     private final RestClient.Builder restClientBuilder;
 
-    public void verificationCode(String email, String code, int expiryMinutes) {
+    public void verificationCode(
+            String email,
+            String code,
+            int expiryMinutes
+    ) {
         if (!enabled) return;
 
         String text =
                 "Your SoulSync verification code is " + code + ".\n\n" +
-                "It expires in " + expiryMinutes + " minutes. " +
+                "It expires in " + expiryMinutes + " minutes.\n\n" +
                 "Do not share this code with anyone.\n\n" +
-                "If you did not create a SoulSync account, you can ignore this email.";
+                "If you did not create a SoulSync account, ignore this email.";
 
         send(
                 email,
@@ -42,7 +47,10 @@ public class MailService {
         );
     }
 
-    public void passwordReset(String email, String token) {
+    public void passwordReset(
+            String email,
+            String token
+    ) {
         if (!enabled) return;
 
         String resetUrl =
@@ -52,33 +60,46 @@ public class MailService {
         send(
                 email,
                 "Reset your SoulSync password",
-                "Reset your password: " + resetUrl
+                "Reset your password here:\n\n" + resetUrl
         );
     }
 
-    private void send(String to, String subject, String text) {
+    private void send(
+            String to,
+            String subject,
+            String text
+    ) {
 
-        if (resendApiKey == null || resendApiKey.isBlank()) {
-            throw new IllegalStateException("RESEND_API_KEY is not configured");
+        if (brevoApiKey == null || brevoApiKey.isBlank()) {
+            throw new IllegalStateException(
+                    "BREVO_API_KEY is not configured"
+            );
         }
 
         RestClient client = restClientBuilder
-                .baseUrl("https://api.resend.com")
+                .baseUrl("https://api.brevo.com")
                 .defaultHeader(
-                        "Authorization",
-                        "Bearer " + resendApiKey
+                        "api-key",
+                        brevoApiKey
                 )
                 .build();
 
+        Map<String, Object> body = Map.of(
+                "sender", Map.of(
+                        "name", "SoulSync",
+                        "email", from
+                ),
+                "to", List.of(
+                        Map.of("email", to)
+                ),
+                "subject", subject,
+                "textContent", text
+        );
+
         client.post()
-                .uri("/emails")
+                .uri("/v3/smtp/email")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of(
-                        "from", from,
-                        "to", new String[]{to},
-                        "subject", subject,
-                        "text", text
-                ))
+                .body(body)
                 .retrieve()
                 .toBodilessEntity();
     }
