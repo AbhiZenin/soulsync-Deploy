@@ -20,6 +20,7 @@ const moreLinks = [
   ['/profile', 'My profile'],
   ['/preferences', 'Preferences'],
   ['/premium', 'Premium'],
+  ['/premium-plus', 'Premium+'],
   ['/settings', 'Settings'],
 ];
 

@@ -5310,3 +5310,104 @@ th {
   margin-top: 8px;
 }
 
+/* SoulSync Premium Batch 4 UI */
+.ss-plus-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(127, 18, 49, 0.10);
+  color: #7f1231;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+
+.ss-plus-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.ss-plus-grid > .panel {
+  overflow: hidden;
+}
+
+.ss-plus-active {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid rgba(127, 18, 49, 0.15);
+  border-radius: 14px;
+  background: rgba(127, 18, 49, 0.045);
+}
+
+.ss-plus-call {
+  margin-top: 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.ss-plus-call strong {
+  display: block;
+  margin: 8px 0;
+}
+
+.ss-plus-call p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.ss-plus-locked {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(127, 18, 49, 0.08),
+      transparent 42%
+    ),
+    #fff;
+}
+
+.ss-plus-support textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.ss-plus-ticket {
+  align-items: flex-start;
+}
+
+.ss-plus-upgrade {
+  max-width: 760px;
+}
+
+.ss-plus-upgrade h2 {
+  margin: 10px 0 8px;
+}
+
+.profile-card {
+  position: relative;
+}
+
+.ss-boosted-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(127, 18, 49, 0.94);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(61, 10, 27, 0.20);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+}
+

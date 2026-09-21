@@ -59,7 +59,7 @@ export default function ProfileCard({
   ].filter(Boolean).join(', ');
 
   return (
-    <article className="match-card">
+    <article className="match-card">{profile.boosted && (<span className="ss-boosted-pill">Boosted</span>)}
       <Link
         href={`/profile/${profile.userId}`}
         className="match-card-photo"
