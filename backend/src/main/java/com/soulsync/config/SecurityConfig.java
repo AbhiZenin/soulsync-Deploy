@@ -35,25 +35,34 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource cors(
+    CorsConfigurationSource corsConfigurationSource(
             @Value("${soulsync.frontend-url}") String frontend,
             @Value("${soulsync.dev-mode}") boolean devMode) {
 
-        CorsConfiguration c = new CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration();
 
-        String normalizedFrontend = frontend.trim().replaceAll("/+$", "");
+        // Remove spaces and trailing slash from production frontend URL
+        String normalizedFrontend = frontend
+                .trim()
+                .replaceAll("/+$", "");
 
         List<String> origins = new ArrayList<>();
+
         origins.add(normalizedFrontend);
 
+        // Only allow localhost origins while running in dev mode
         if (devMode) {
             origins.add("http://localhost:3000");
             origins.add("http://127.0.0.1:3000");
         }
 
-        c.setAllowedOrigins(origins.stream().distinct().toList());
+        config.setAllowedOrigins(
+                origins.stream()
+                        .distinct()
+                        .toList()
+        );
 
-        c.setAllowedMethods(List.of(
+        config.setAllowedMethods(List.of(
                 "GET",
                 "POST",
                 "PUT",
@@ -62,50 +71,93 @@ public class SecurityConfig {
                 "OPTIONS"
         ));
 
-        c.setAllowedHeaders(List.of("*"));
-        c.setAllowCredentials(true);
+        config.setAllowedHeaders(List.of("*"));
+
+        config.setExposedHeaders(List.of(
+                "Authorization",
+                "Content-Type"
+        ));
+
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", c);
+        source.registerCorsConfiguration("/**", config);
 
         return source;
     }
 
     @Bean
-    SecurityFilterChain chain(HttpSecurity http) throws Exception {
+    SecurityFilterChain chain(
+            HttpSecurity http,
+            CorsConfigurationSource corsConfigurationSource
+    ) throws Exception {
 
         return http
-                .csrf(csrf -> csrf.disable())
 
-                .cors(cors -> {})
+                .csrf(csrf ->
+                        csrf.disable()
+                )
+
+                // Explicitly use our CORS configuration
+                .cors(cors ->
+                        cors.configurationSource(corsConfigurationSource)
+                )
 
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
 
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                        // Allow browser CORS preflight requests
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**"
+                        )
                         .permitAll()
 
+                        // Public authentication endpoints
                         .requestMatchers(
-                                "/api/v1/auth/**",
-                                "/api/v1/subscriptions/webhook",
-                                "/actuator/health/**",
+                                "/api/v1/auth/**"
+                        )
+                        .permitAll()
+
+                        // Stripe/subscription webhook
+                        .requestMatchers(
+                                "/api/v1/subscriptions/webhook"
+                        )
+                        .permitAll()
+
+                        // Health endpoint
+                        .requestMatchers(
+                                "/actuator/health/**"
+                        )
+                        .permitAll()
+
+                        // WebSocket handshake
+                        .requestMatchers(
                                 "/ws/**"
                         )
                         .permitAll()
 
+                        // Public API endpoints
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/v1/public/**"
                         )
                         .permitAll()
 
-                        .requestMatchers("/api/v1/admin/**")
+                        // Admin endpoints
+                        .requestMatchers(
+                                "/api/v1/admin/**"
+                        )
                         .hasRole("ADMIN")
 
+                        // Everything else requires authentication
                         .anyRequest()
                         .authenticated()
                 )
