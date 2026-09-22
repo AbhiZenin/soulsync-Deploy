@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import BackendWakeup from '@/components/BackendWakeup';
 const demoProfiles = [
   {name:'Ananya Reddy',age:26,city:'Austin, TX',job:'Data Analyst',img:'/demo-profiles/demo-001.jpg',match:'94%'},
   {name:'Kavya Nair',age:27,city:'Dallas, TX',job:'Product Designer',img:'/demo-profiles/demo-002.jpg',match:'91%'},
@@ -16,6 +17,7 @@ const reviews = [
 export default function Home(){
   return (
     <main className="ss-real-home">
+      <BackendWakeup />
       <nav className="ss-real-nav">
         <Link href="/" className="brand">
           <span className="brand-mark">S</span>
