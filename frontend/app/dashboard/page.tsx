@@ -1,194 +1,187 @@
 'use client';
 
+import {useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import AppShell from '@/components/AppShell';
 import ProfileCard from '@/components/ProfileCard';
-import { api } from '@/lib/api';
-import type {
-  ProfileCard as Card,
-  ProfileDetail,
-  Interest,
-} from '@/lib/types';
+import SecureImage from '@/components/SecureImage';
+import {api} from '@/lib/api';
+import type {ProfileCard as Card,ProfileDetail,Interest} from '@/lib/types';
 
-export default function Dashboard() {
-  const [profile, setProfile] =
-    useState<ProfileDetail | null>(null);
+type PageResponse={content:Card[]};
 
-  const [matches, setMatches] =
-    useState<Card[]>([]);
+export default function Dashboard(){
+  const [me,setMe]=useState<ProfileDetail|null>(null);
+  const [matches,setMatches]=useState<Card[]>([]);
+  const [community,setCommunity]=useState<Card[]>([]);
+  const [received,setReceived]=useState<Interest[]>([]);
+  const [sent,setSent]=useState<Interest[]>([]);
+  const [loading,setLoading]=useState(true);
 
-  const [received, setReceived] =
-    useState<Interest[]>([]);
+  async function load(){
+    setLoading(true);
+    try{
+      const [profile,matchRows,communityPage,receivedRows,sentRows]=await Promise.all([
+        api<ProfileDetail>('/profile/me'),
+        api<Card[]>('/matches').catch(()=>[]),
+        api<PageResponse>('/profiles?country=USA&size=12').catch(()=>({content:[]})),
+        api<Interest[]>('/interests/received').catch(()=>[]),
+        api<Interest[]>('/interests/sent').catch(()=>[]),
+      ]);
+      setMe(profile);
+      setMatches(matchRows);
+      setCommunity(communityPage.content ?? []);
+      setReceived(receivedRows);
+      setSent(sentRows);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  useEffect(() => {
-    Promise.all([
-      api<ProfileDetail>('/profile/me'),
-      api<Card[]>('/matches'),
-      api<Interest[]>('/interests/received'),
-    ])
-      .then(([p, m, i]) => {
-        setProfile(p);
-        setMatches(m);
-        setReceived(i);
-      })
-      .catch(console.error);
-  }, []);
+  useEffect(()=>{void load()},[]);
 
-  const pending =
-    received.filter((i) => i.status === 'PENDING').length;
-
-  const firstName =
-    profile?.displayName?.split(' ')[0] || 'there';
+  const pending=received.filter(x=>x.status==='PENDING').length;
+  const connections=[...received,...sent].filter(x=>x.status==='ACCEPTED').length;
+  const recentlyActive=useMemo(
+    ()=>[...community]
+      .sort((a,b)=>new Date(b.lastActiveAt??0).getTime()-new Date(a.lastActiveAt??0).getTime())
+      .slice(0,4),
+    [community]
+  );
+  const spotlight=(matches.length?matches:community).slice(0,4);
+  const profileName=me?.displayName?.split(' ')[0] || 'there';
+  const completion=me?.completionPercent ?? 0;
 
   return (
-    <AppShell
-      title={`Find your person, ${firstName}`}
-      subtitle="Discover people who match your preferences, values and future."
-    >
-      <section className="discovery-toolbar">
-        <Link href="/search" className="discovery-search">
-          <span>⌕</span>
-
-          <span>
-            Search by location, education, profession…
-          </span>
-        </Link>
-
-        <Link href="/preferences" className="filter-pill">
-          Age
-          <span>⌄</span>
-        </Link>
-
-        <Link href="/preferences" className="filter-pill">
-          Location
-          <span>⌄</span>
-        </Link>
-
-        <Link href="/preferences" className="filter-pill">
-          More filters
-          <span>＋</span>
-        </Link>
-      </section>
-
-      {pending > 0 && (
-        <Link href="/interests" className="interest-banner">
-          <div className="interest-banner-icon">♡</div>
-
-          <div>
-            <strong>
-              {pending} new {pending === 1 ? 'person is' : 'people are'}
-              {' '}interested in you
-            </strong>
-
+    <AppShell title={`Welcome back, ${profileName}`} subtitle="Your SoulSync home for thoughtful discovery, connections and conversations.">
+      <div className="ss-real-dashboard">
+        <section className="ss-real-dash-hero">
+          <div className="ss-real-dash-hero-copy">
+            <span className="ss-real-kicker">YOUR MATCHMAKING JOURNEY</span>
+            <h2>Keep your profile strong and your discovery intentional.</h2>
             <p>
-              Review your received interests and decide
-              whether you would like to connect.
+              Review compatible profiles, respond to new interests and keep your profile fresh
+              so the right people can understand who you are.
             </p>
-          </div>
 
-          <span className="interest-banner-action">
-            View interests →
-          </span>
-        </Link>
-      )}
-
-      {profile && profile.completionPercent < 70 && (
-        <section className="profile-progress-card">
-          <div>
-            <p>COMPLETE YOUR PROFILE</p>
-
-            <h3>
-              Help the right people discover you.
-            </h3>
-
-            <span>
-              Your profile is {profile.completionPercent}% complete.
-            </span>
-          </div>
-
-          <div className="profile-progress-actions">
-            <div className="profile-progress-track">
-              <span
-                style={{
-                  width: `${profile.completionPercent}%`,
-                }}
-              />
+            <div className="ss-real-dash-actions">
+              <Link href="/search" className="primary-btn">Search profiles</Link>
+              <Link href="/profile" className="secondary-btn">Update my profile</Link>
             </div>
+          </div>
 
-            <Link href="/profile">
-              Complete profile →
-            </Link>
+          <div className="ss-real-dash-progress">
+            <div className="ss-real-dash-progress-top">
+              <span>PROFILE COMPLETION</span>
+              <strong>{completion}%</strong>
+            </div>
+            <div className="ss-real-dash-progress-track"><span style={{width:`${Math.min(100,completion)}%`}}/></div>
+            <p>
+              {completion>=90
+                ? 'Your profile is in great shape. Keep photos and details current.'
+                : 'Complete more profile details to help members understand you better.'}
+            </p>
+            <Link href="/profile">Improve profile →</Link>
           </div>
         </section>
-      )}
 
-      <section className="discovery-section">
-        <div className="discovery-section-head">
+        <section className="ss-real-dash-stats">
+          <div><span>Pending interests</span><strong>{pending}</strong><small>Waiting for your response</small></div>
+          <div><span>Connections</span><strong>{connections}</strong><small>Accepted interests</small></div>
+          <div><span>Recommended</span><strong>{matches.length}</strong><small>Compatibility-ranked profiles</small></div>
+          <div><span>Explore</span><strong>{community.length}</strong><small>Profiles loaded today</small></div>
+        </section>
+
+        <section className="ss-real-dash-section">
+          <div className="ss-real-dash-section-head">
+            <div>
+              <span className="ss-real-kicker">RECOMMENDED FOR YOU</span>
+              <h2>Profiles worth a closer look</h2>
+              <p>Based on your partner preferences and available compatibility signals.</p>
+            </div>
+            <Link href="/matches">View all matches →</Link>
+          </div>
+
+          {loading ? (
+            <div className="ss-real-dash-loading">Loading recommendations…</div>
+          ) : spotlight.length ? (
+            <div className="profile-grid ss-real-dash-profile-grid">
+              {spotlight.map(p=><ProfileCard key={p.userId} profile={p} onChanged={load}/>)}
+            </div>
+          ) : (
+            <div className="empty">No recommendations yet. Complete your partner preferences or broaden your filters.</div>
+          )}
+        </section>
+
+        <section className="ss-real-dash-split">
+          <div className="ss-real-dash-section">
+            <div className="ss-real-dash-section-head compact">
+              <div>
+                <span className="ss-real-kicker">RECENTLY ACTIVE</span>
+                <h2>People exploring SoulSync now</h2>
+              </div>
+              <Link href="/search">Search more →</Link>
+            </div>
+
+            <div className="ss-real-active-list">
+              {recentlyActive.map(p=>(
+                <Link href={`/profile/${p.userId}`} key={p.userId} className="ss-real-active-row">
+                  <div className="ss-real-active-photo">
+                    {p.primaryPhoto
+                      ? <SecureImage path={p.primaryPhoto} alt={p.displayName}/>
+                      : <span>{p.displayName?.[0]}</span>}
+                  </div>
+                  <div>
+                    <strong>{p.displayName}</strong>
+                    <p>{[p.age&&`${p.age} yrs`,p.city,p.state].filter(Boolean).join(' · ')}</p>
+                  </div>
+                  <span className="ss-real-online-dot"/>
+                </Link>
+              ))}
+              {!recentlyActive.length && !loading && <div className="empty">No recently active profiles yet.</div>}
+            </div>
+          </div>
+
+          <aside className="ss-real-dash-side">
+            <div className="ss-real-dash-side-card">
+              <span className="ss-real-kicker">QUICK DISCOVERY</span>
+              <h3>Find someone by what matters most.</h3>
+              <p>Search by location and basic preferences, then refine further with Premium filters.</p>
+              <Link href="/search" className="secondary-btn">Open profile search</Link>
+            </div>
+
+            <div className="ss-real-dash-side-card premium">
+              <span>PREMIUM</span>
+              <h3>See more of your discovery activity.</h3>
+              <p>Unlock profile visitors, enhanced discovery and unlimited interests.</p>
+              <Link href="/premium">Explore plans →</Link>
+            </div>
+          </aside>
+        </section>
+
+        <section className="ss-real-dash-journey">
           <div>
-            <p className="section-kicker">
-              CURATED FOR YOU
-            </p>
-
-            <h2>Recommended matches</h2>
-
-            <p>
-              Profiles selected using your current partner
-              preferences.
-            </p>
+            <span>1</span>
+            <strong>Discover</strong>
+            <p>Browse compatible people.</p>
           </div>
-
-          <Link href="/matches">
-            View all matches →
-          </Link>
-        </div>
-
-        {matches.length ? (
-          <div className="matrimony-profile-grid">
-            {matches.slice(0, 8).map((p) => (
-              <ProfileCard
-                key={p.userId}
-                profile={p}
-              />
-            ))}
+          <div>
+            <span>2</span>
+            <strong>Express interest</strong>
+            <p>Make your intention clear.</p>
           </div>
-        ) : (
-          <div className="matrimony-empty">
-            <div>♡</div>
-
-            <h3>Your recommendations are being prepared.</h3>
-
-            <p>
-              Complete your profile and partner preferences
-              to receive better matches.
-            </p>
-
-            <Link href="/preferences">
-              Update preferences
-            </Link>
+          <div>
+            <span>3</span>
+            <strong>Connect</strong>
+            <p>Build a mutual conversation.</p>
           </div>
-        )}
-      </section>
-
-      <section className="matrimony-values">
-        <div>
-          <span>✓</span>
-          <strong>Verified profiles</strong>
-          <p>Connect with greater confidence.</p>
-        </div>
-
-        <div>
-          <span>♡</span>
-          <strong>Compatibility focused</strong>
-          <p>Look beyond just photographs.</p>
-        </div>
-
-        <div>
-          <span>⌾</span>
-          <strong>Your privacy matters</strong>
-          <p>You control your profile and photos.</p>
-        </div>
-      </section>
+          <div>
+            <span>4</span>
+            <strong>Know each other</strong>
+            <p>Move at a pace that feels right.</p>
+          </div>
+        </section>
+      </div>
     </AppShell>
-  );
+  )
 }
