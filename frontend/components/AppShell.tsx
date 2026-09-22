@@ -1,33 +1,55 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { api, logout } from '@/lib/api';
-
-const primaryLinks = [
-  ['/dashboard', 'Discover'],
-  ['/matches', 'Matches'],
-  ['/interests', 'Interests'],
-  ['/messages', 'Messages'],
-  ['/search', 'Search'],
-  ['/discover', 'Discover+'],
-];
-
-const moreLinks = [
-  ['/shortlist', 'Shortlist'],
-  ['/notifications', 'Notifications'],
-  ['/profile', 'My profile'],
-  ['/preferences', 'Preferences'],
-  ['/premium', 'Premium'],
-  ['/premium-plus', 'Premium+'],
-  ['/settings', 'Settings'],
-];
+import {usePathname, useRouter} from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {api, logout} from '@/lib/api';
 
 type Account = {
   email: string;
   role: string;
 };
+
+const primary = [
+  ['/dashboard', 'Home', '⌂'],
+  ['/matches', 'Discover', '♡'],
+  ['/search', 'Search', '⌕'],
+  ['/interests', 'Interests', '✦'],
+  ['/messages', 'Messages', '✉'],
+] as const;
+
+const saved = [
+  ['/shortlist', 'Shortlist', '☆'],
+  ['/notifications', 'Notifications', '●'],
+] as const;
+
+const profile = [
+  ['/profile', 'My profile', '◉'],
+  ['/preferences', 'Preferences', '⌁'],
+  ['/settings', 'Settings', '⚙'],
+] as const;
+
+function NavLink({
+  href,
+  label,
+  icon,
+  active,
+}: {
+  href: string;
+  label: string;
+  icon: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={active ? 'nav-item active ss-app-nav-item' : 'nav-item ss-app-nav-item'}
+    >
+      <span className="ss-app-nav-icon">{icon}</span>
+      <span>{label}</span>
+    </Link>
+  );
+}
 
 export default function AppShell({
   children,
@@ -40,166 +62,181 @@ export default function AppShell({
 }) {
   const path = usePathname();
   const router = useRouter();
-
-  const [ready, setReady] = useState(false);
   const [account, setAccount] = useState<Account | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     api<Account>('/account/me')
-      .then((a) => {
-        setAccount(a);
-        setReady(true);
+      .then(value => {
+        if (mounted) setAccount(value);
       })
-      .catch(() => router.replace('/login'));
+      .catch(() => {
+        if (mounted) router.replace('/login');
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, [router]);
 
-  if (!ready) {
-    return (
-      <div className="loading-screen">
-        <div className="spinner" />
-        <p>Opening SoulSync…</p>
-      </div>
-    );
-  }
+  const active = (href: string) =>
+    path === href || (href !== '/dashboard' && path.startsWith(`${href}/`));
 
   return (
-    <div className="matrimony-app">
-      <header className="matrimony-nav">
-        <div className="matrimony-nav-inner">
-          <Link href="/dashboard" className="app-brand">
-            <span className="app-brand-mark">S</span>
-
-            <span className="app-brand-name">
-              Soul<span>Sync</span>
+    <div className="app-layout ss-app-layout">
+      <aside className="sidebar ss-app-sidebar">
+        <div className="ss-app-sidebar-top">
+          <Link href="/dashboard" className="brand ss-app-brand">
+            <span className="brand-mark">S</span>
+            <span>
+              SoulSync
+              <small>meaningful matches</small>
             </span>
           </Link>
 
-          <nav className="app-primary-nav">
-            {primaryLinks.map(([href, label]) => (
-              <Link
-                key={href}
-                href={href}
-                className={
-                  path === href ? 'app-nav-link active' : 'app-nav-link'
-                }
-              >
-                {label}
-              </Link>
-            ))}
+          <nav className="ss-app-nav">
+            <div className="ss-app-nav-group">
+              <span className="ss-app-nav-label">EXPLORE</span>
+              {primary.map(([href, label, icon]) => (
+                <NavLink
+                  key={href}
+                  href={href}
+                  label={label}
+                  icon={icon}
+                  active={active(href)}
+                />
+              ))}
+            </div>
+
+            <div className="ss-app-nav-group">
+              <span className="ss-app-nav-label">YOUR SPACE</span>
+              {saved.map(([href, label, icon]) => (
+                <NavLink
+                  key={href}
+                  href={href}
+                  label={label}
+                  icon={icon}
+                  active={active(href)}
+                />
+              ))}
+            </div>
+
+            <div className="ss-app-nav-group">
+              <span className="ss-app-nav-label">PROFILE</span>
+              {profile.map(([href, label, icon]) => (
+                <NavLink
+                  key={href}
+                  href={href}
+                  label={label}
+                  icon={icon}
+                  active={active(href)}
+                />
+              ))}
+            </div>
+
+            <div className="ss-app-nav-group">
+              <span className="ss-app-nav-label">MEMBERSHIP</span>
+              <NavLink
+                href="/premium"
+                label="Premium"
+                icon="◇"
+                active={active('/premium')}
+              />
+              <NavLink
+                href="/premium-plus"
+                label="Premium+"
+                icon="✧"
+                active={active('/premium-plus')}
+              />
+              <NavLink
+                href="/discover"
+                label="Discover+"
+                icon="⌁"
+                active={active('/discover')}
+              />
+              {account?.role === 'ADMIN' && (
+                <NavLink
+                  href="/admin"
+                  label="Admin"
+                  icon="▣"
+                  active={active('/admin')}
+                />
+              )}
+            </div>
           </nav>
+        </div>
 
-          <div className="app-nav-actions">
-            <Link
-              href="/shortlist"
-              className="nav-icon-btn"
-              aria-label="Shortlist"
-            >
-              ♡
-            </Link>
+        <div className="sidebar-foot ss-app-sidebar-foot">
+          <div className="mini-account ss-app-account">
+            <span className="avatar tiny ss-app-account-avatar">
+              {account?.email?.[0]?.toUpperCase() ?? 'S'}
+            </span>
+            <div>
+              <strong>
+                {account?.email?.split('@')[0] ?? 'Loading…'}
+              </strong>
+              <small>{account?.role ?? 'Member'}</small>
+            </div>
+          </div>
 
-            <Link
-              href="/notifications"
-              className="nav-icon-btn"
-              aria-label="Notifications"
-            >
-              ♢
-            </Link>
+          <button
+            type="button"
+            className="ghost-btn ss-app-signout"
+            onClick={() => void logout()}
+          >
+            Sign out
+          </button>
+        </div>
+      </aside>
 
-            <button
-              type="button"
-              className="app-account-button"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-expanded={menuOpen}
-            >
-              <span className="app-avatar">
-                {account?.email?.[0]?.toUpperCase()}
-              </span>
-
-              <span className="app-account-copy">
-                <strong>
-                  {account?.email?.split('@')[0]}
-                </strong>
-                <small>My account</small>
-              </span>
-
-              <span className="account-chevron">⌄</span>
-            </button>
-
-            {menuOpen && (
-              <div className="account-menu">
-                {moreLinks.map(([href, label]) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {label}
-                  </Link>
-                ))}
-
-                {account?.role === 'ADMIN' && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Admin
-                  </Link>
-                )}
-
-                <div className="account-menu-divider" />
-
-                <button type="button" onClick={logout}>
-                  Sign out
-                </button>
-              </div>
-            )}
+      <main className="main ss-app-main">
+        <div className="ss-app-mobile-bar">
+          <Link href="/dashboard" className="ss-app-mobile-brand">
+            <span className="brand-mark">S</span>
+            <strong>SoulSync</strong>
+          </Link>
+          <div>
+            <Link href="/search">Search</Link>
+            <Link href="/messages">Messages</Link>
           </div>
         </div>
-      </header>
 
-      <main className="matrimony-main">
-        <header className="matrimony-page-head">
+        <header className="page-head ss-app-page-head">
           <div>
-            <p className="matrimony-page-eyebrow">
-              SOULSYNC
-            </p>
-
+            <p className="eyebrow">SOULSYNC</p>
             <h1>{title}</h1>
-
             {subtitle && <p>{subtitle}</p>}
+          </div>
+
+          <div className="ss-app-head-actions">
+            <Link href="/search" className="ss-app-head-link">
+              ⌕ <span>Find someone</span>
+            </Link>
+            <Link href="/interests" className="ss-app-head-link">
+              ♡ <span>Interests</span>
+            </Link>
+            <Link href="/messages" className="ss-app-head-link">
+              ✉ <span>Messages</span>
+            </Link>
           </div>
         </header>
 
-        {children}
+        <div className="ss-app-content">{children}</div>
+
+        <nav className="ss-app-bottom-nav" aria-label="Mobile navigation">
+          {primary.map(([href, label, icon]) => (
+            <Link
+              key={href}
+              href={href}
+              className={active(href) ? 'active' : ''}
+            >
+              <span>{icon}</span>
+              <small>{label}</small>
+            </Link>
+          ))}
+        </nav>
       </main>
-
-      <nav className="mobile-matrimony-nav">
-        <Link href="/dashboard">
-          <span>⌂</span>
-          Discover
-        </Link>
-
-        <Link href="/matches">
-          <span>♡</span>
-          Matches
-        </Link>
-
-        <Link href="/interests">
-          <span>✦</span>
-          Interests
-        </Link>
-
-        <Link href="/messages">
-          <span>✉</span>
-          Messages
-        </Link>
-
-        <Link href="/profile">
-          <span>◉</span>
-          Profile
-        </Link>
-      </nav>
     </div>
   );
 }
