@@ -11103,3 +11103,323 @@ input:focus, select:focus, textarea:focus {
     transition: none !important;
   }
 }
+
+/* SoulSync Matrimony Warmth V1 */
+
+:root {
+  --ss-bg: #fffaf7;
+  --ss-surface: #ffffff;
+  --ss-surface-soft: #fff5f6;
+  --ss-border-soft: #f0e1e4;
+  --ss-text-strong: #3a2b30;
+  --ss-text: #5d4b52;
+  --ss-text-soft: #7f6c73;
+  --ss-brand: #b34b72;
+  --ss-brand-deep: #8f3658;
+  --ss-accent: #f4d8df;
+}
+
+body,
+.main,
+.app-layout,
+.ss-app-layout {
+  background: linear-gradient(180deg, #fffdfb 0%, var(--ss-bg) 100%) !important;
+  color: var(--ss-text) !important;
+}
+
+p, li, span, small, label, input, select, textarea, button {
+  letter-spacing: normal !important;
+}
+
+p,
+li,
+label,
+input,
+select,
+textarea,
+.ss-app-content p,
+.ss-app-content li,
+.ss-app-content label {
+  color: var(--ss-text) !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+}
+
+small,
+.muted,
+.ss-app-content small,
+.ss-dash-person-copy small,
+.ss-member-title-row p,
+.ss-member-note,
+.ss-dash-section-head p,
+.ss-dash-empty p,
+.ss-dash-membership p,
+.ss-dash-completion p {
+  color: var(--ss-text-soft) !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.page-head h1,
+.ss-app-page-head h1,
+.ss-dash-hero-copy h2,
+.ss-dash-section-head h2,
+.ss-saved-empty h2 {
+  color: var(--ss-text-strong) !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.page-head h1,
+.ss-app-page-head h1 {
+  font-size: clamp(32px, 3vw, 42px) !important;
+}
+
+h2,
+.ss-dash-section-head h2,
+.ss-saved-head h2 {
+  font-size: clamp(24px, 2vw, 30px) !important;
+}
+
+h3,
+.ss-dash-next h3,
+.ss-dash-empty h3,
+.ss-dash-membership h3,
+.ss-member-title-row h3 {
+  font-size: 20px !important;
+}
+
+.eyebrow,
+.ss-dash-kicker,
+.ss-app-nav-label {
+  color: var(--ss-brand) !important;
+  font-size: 11px !important;
+  letter-spacing: .12em !important;
+}
+
+/* Softer surfaces: fewer harsh boxes */
+.panel,
+.list-row,
+.profile-card,
+.profile-grid > *,
+.ss-member-card,
+.ss-dash-section,
+.ss-dash-stat,
+.ss-dash-next,
+.ss-dash-action-card,
+.ss-dash-membership,
+.ss-dash-journey,
+.ss-dash-completion,
+.ss-saved-empty,
+.ss-app-head-link,
+.ss-app-bottom-nav,
+.ss-app-sidebar,
+input,
+select,
+textarea,
+.form-message,
+.empty {
+  border-color: var(--ss-border-soft) !important;
+}
+
+.panel,
+.ss-dash-section,
+.ss-dash-membership,
+.ss-dash-journey,
+.ss-saved-empty,
+.ss-member-card,
+.ss-dash-completion,
+.ss-dash-stat,
+.ss-dash-next,
+.ss-dash-action-card {
+  background: rgba(255,255,255,0.88) !important;
+  box-shadow: 0 10px 30px rgba(95, 64, 77, 0.05) !important;
+}
+
+/* reduce visual clutter */
+.ss-dash,
+.dashboard-grid,
+.profile-grid,
+.list,
+.ss-dash-active-list {
+  gap: 18px !important;
+}
+
+.list-row,
+.ss-dash-person,
+.ss-dash-action-card,
+.ss-dash-journey a {
+  background: transparent !important;
+  border-radius: 16px !important;
+}
+
+.list-row:hover,
+.ss-dash-person:hover,
+.ss-dash-action-card:hover,
+.ss-member-card:hover,
+.ss-dash-stat:hover {
+  background: var(--ss-surface-soft) !important;
+  transform: translateY(-2px);
+}
+
+/* navigation */
+.ss-app-nav-item,
+.nav-item {
+  font-size: 14px !important;
+  min-height: 42px !important;
+  color: var(--ss-text) !important;
+}
+
+.ss-app-nav-item.active,
+.nav-item.active {
+  background: linear-gradient(135deg, #fff2f5, #fff9fa) !important;
+  color: var(--ss-brand-deep) !important;
+}
+
+.ss-app-brand > span:last-child,
+.brand,
+.brand span {
+  color: var(--ss-text-strong) !important;
+}
+
+/* buttons */
+.primary-btn,
+.secondary-btn,
+.ghost-btn,
+button {
+  min-height: 44px !important;
+  padding: 10px 16px !important;
+  font-size: 14px !important;
+  border-radius: 14px !important;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--ss-brand), var(--ss-brand-deep)) !important;
+  color: white !important;
+  box-shadow: 0 10px 22px rgba(179, 75, 114, 0.22) !important;
+}
+
+.secondary-btn,
+.ghost-btn {
+  background: #fff !important;
+  color: var(--ss-brand-deep) !important;
+  border: 1px solid var(--ss-border-soft) !important;
+}
+
+/* form readability */
+input,
+select,
+textarea {
+  min-height: 46px !important;
+  background: #fff !important;
+  color: var(--ss-text-strong) !important;
+  border-radius: 14px !important;
+  font-size: 14px !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #a08f95 !important;
+}
+
+/* member cards feel more matrimonial */
+.ss-member-photo,
+.profile-photo {
+  border-bottom: 0 !important;
+}
+
+.ss-member-body,
+.profile-body {
+  padding: 16px !important;
+}
+
+.ss-member-tags span,
+.tags span,
+.match-pill,
+.status {
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+}
+
+.ss-member-tags span,
+.tags span {
+  background: #fff1f4 !important;
+  color: #7a4e60 !important;
+}
+
+/* dashboard hero + sections less like admin UI */
+.ss-dash-hero {
+  background:
+    radial-gradient(circle at top right, rgba(216, 122, 156, 0.13), transparent 28%),
+    linear-gradient(135deg, #fffdfd, #fff4f6) !important;
+}
+
+.ss-dash-hero-copy p {
+  font-size: 15px !important;
+  max-width: 62ch !important;
+}
+
+.ss-dash-next,
+.ss-dash-membership,
+.ss-saved-empty {
+  border-radius: 22px !important;
+}
+
+/* globally reduce research-paper feel */
+.page-head,
+.ss-app-page-head,
+.panel-head,
+.ss-dash-section-head {
+  margin-bottom: 18px !important;
+}
+
+.page-head p,
+.ss-app-page-head p,
+.panel p {
+  max-width: 70ch;
+}
+
+/* messages / interests / settings */
+.conversation-list,
+.chat,
+.settings-grid,
+.dashboard-grid > section,
+.dashboard-grid > aside,
+.ss-chat-sidebar,
+.ss-chat-main {
+  background: rgba(255,255,255,.88) !important;
+  border: 1px solid var(--ss-border-soft) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 30px rgba(95, 64, 77, 0.05) !important;
+}
+
+/* mobile */
+@media (max-width: 820px) {
+  p,
+  li,
+  label,
+  input,
+  select,
+  textarea,
+  button,
+  .ss-app-content p,
+  .ss-app-content li {
+    font-size: 15px !important;
+  }
+
+  .page-head h1,
+  .ss-app-page-head h1 {
+    font-size: 30px !important;
+  }
+
+  .panel,
+  .ss-dash-section,
+  .ss-dash-hero,
+  .ss-member-card,
+  .ss-dash-stat,
+  .ss-dash-next,
+  .ss-dash-membership {
+    border-radius: 18px !important;
+  }
+}
