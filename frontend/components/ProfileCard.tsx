@@ -6,10 +6,10 @@ import SecureImage from '@/components/SecureImage';
 import {api} from '@/lib/api';
 import type {ProfileCard as Card} from '@/lib/types';
 
-function activeRecently(value?: string) {
-  if (!value) return false;
-  const time = new Date(value).getTime();
-  return Number.isFinite(time) && Date.now() - time < 7 * 24 * 60 * 60 * 1000;
+function isRecent(lastActiveAt?: string) {
+  if (!lastActiveAt) return false;
+  const value = new Date(lastActiveAt).getTime();
+  return Number.isFinite(value) && Date.now() - value < 7 * 24 * 60 * 60 * 1000;
 }
 
 export default function ProfileCard({
@@ -22,43 +22,36 @@ export default function ProfileCard({
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [note, setNote] = useState('');
 
   async function interest() {
-    if (sent || busy) return;
+    if (busy || sent) return;
 
     setBusy(true);
-    setNote('');
-
     try {
       await api(`/interests/${profile.userId}`, {method: 'POST'});
       setSent(true);
-      setNote('Interest sent');
       onChanged?.();
     } catch (e) {
-      setNote(e instanceof Error ? e.message : 'Unable to send interest');
+      alert(e instanceof Error ? e.message : 'Unable to send interest');
     } finally {
       setBusy(false);
     }
   }
 
   async function shortlist() {
-    setNote('');
-
     try {
       await api(`/shortlist/${profile.userId}`, {method: 'POST'});
       setSaved(true);
-      setNote('Saved to shortlist');
     } catch (e) {
-      setNote(e instanceof Error ? e.message : 'Unable to save profile');
+      alert(e instanceof Error ? e.message : 'Unable to save profile');
     }
   }
 
   return (
-    <article className="profile-card ss-member-card">
+    <article className="profile-card ss-romance-card">
       <Link
         href={`/profile/${profile.userId}`}
-        className="profile-photo ss-member-photo"
+        className="profile-photo ss-romance-photo"
       >
         {profile.primaryPhoto ? (
           <SecureImage
@@ -66,21 +59,21 @@ export default function ProfileCard({
             alt={profile.displayName}
           />
         ) : (
-          <div className="photo-placeholder ss-member-placeholder">
+          <div className="photo-placeholder ss-romance-placeholder">
             {profile.displayName?.[0] ?? 'S'}
           </div>
         )}
 
-        <div className="ss-member-photo-top">
+        <div className="ss-romance-photo-shade" />
+
+        <div className="ss-romance-photo-top">
           {typeof profile.matchScore === 'number' && (
-            <span className="match-pill ss-member-match">
-              {profile.matchScore}% match
-            </span>
+            <span>{profile.matchScore}% match</span>
           )}
 
           <button
             type="button"
-            className={saved ? 'ss-member-save saved' : 'ss-member-save'}
+            className={saved ? 'ss-romance-save saved' : 'ss-romance-save'}
             onClick={e => {
               e.preventDefault();
               e.stopPropagation();
@@ -92,58 +85,41 @@ export default function ProfileCard({
           </button>
         </div>
 
-        {activeRecently(profile.lastActiveAt) && (
-          <span className="ss-member-active">
-            <i /> Recently active
-          </span>
-        )}
+        <div className="ss-romance-photo-bottom">
+          {isRecent(profile.lastActiveAt) && (
+            <span className="ss-romance-active"><i /> Recently active</span>
+          )}
+          <h3>
+            {profile.displayName}
+            {profile.age ? `, ${profile.age}` : ''}
+            {profile.emailVerified && (
+              <b title="Email verified">✓</b>
+            )}
+          </h3>
+          <p>
+            {[profile.city, profile.state].filter(Boolean).join(', ')}
+          </p>
+        </div>
       </Link>
 
-      <div className="profile-body ss-member-body">
-        <div className="ss-member-title-row">
-          <div>
-            <h3>
-              {profile.displayName}
-              {profile.emailVerified && (
-                <span className="ss-member-verified" title="Email verified">
-                  ✓
-                </span>
-              )}
-            </h3>
-            <p>
-              {[
-                profile.age && `${profile.age} yrs`,
-                profile.city,
-                profile.state,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
-            </p>
-          </div>
-        </div>
-
-        <div className="ss-member-tags">
-          {[profile.occupation, profile.education, profile.motherTongue, profile.religion]
+      <div className="profile-body ss-romance-body">
+        <div className="ss-romance-details">
+          {[profile.occupation, profile.motherTongue]
             .filter(Boolean)
-            .slice(0, 3)
+            .slice(0, 2)
             .map(value => (
               <span key={String(value)}>{value}</span>
             ))}
         </div>
 
-        {note && (
-          <div className={sent || saved ? 'ss-member-note success' : 'ss-member-note'}>
-            {note}
-          </div>
-        )}
-
-        <div className="card-actions ss-member-actions">
+        <div className="ss-romance-actions">
           <Link
             className="secondary-btn"
             href={`/profile/${profile.userId}`}
           >
             View profile
           </Link>
+
           <button
             type="button"
             className="primary-btn"
