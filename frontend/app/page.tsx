@@ -1,183 +1,249 @@
 import Link from 'next/link';
 import BackendWakeup from '@/components/BackendWakeup';
+import HomepageMatchFinder from '@/components/HomepageMatchFinder';
 
-const profiles = [
-  {name:'Ananya', age:26, city:'Austin', role:'Data Analyst', img:'/demo-profiles/demo-001.jpg', match:'94%'},
-  {name:'Kavya', age:27, city:'Dallas', role:'Product Designer', img:'/demo-profiles/demo-002.jpg', match:'91%'},
-  {name:'Sneha', age:25, city:'Richardson', role:'Software Engineer', img:'/demo-profiles/demo-003.jpg', match:'89%'},
-  {name:'Meera', age:28, city:'Seattle', role:'Business Analyst', img:'/demo-profiles/demo-004.jpg', match:'88%'},
+const previewProfiles = [
+  {name:'Ananya',age:26,city:'Austin, TX',role:'Data Analyst',language:'Telugu',religion:'Hindu',match:'94%',img:'/demo-profiles/demo-001.jpg'},
+  {name:'Arjun',age:28,city:'Dallas, TX',role:'Software Engineer',language:'Telugu',religion:'Hindu',match:'92%',img:'/demo-profiles/demo-010.jpg'},
+  {name:'Kavya',age:27,city:'Seattle, WA',role:'Product Designer',language:'Tamil',religion:'Hindu',match:'90%',img:'/demo-profiles/demo-002.jpg'},
+  {name:'Rahul',age:29,city:'San Jose, CA',role:'Cloud Engineer',language:'Hindi',religion:'Hindu',match:'88%',img:'/demo-profiles/demo-011.jpg'},
 ];
 
-export default function Home(){
+const communities = [
+  ['Telugu','Language & culture'],['Tamil','Language & culture'],
+  ['Hindi','Language & culture'],['Christian','Faith'],
+  ['Hindu','Faith'],['USA NRI','Location'],
+  ['Professionals','Career'],['Recently active','Activity'],
+];
+
+const faqs = [
+  ['Is SoulSync a dating app?','SoulSync is designed for marriage-minded introductions and intentional matchmaking. Profiles, preferences, interests and communication are structured around serious relationship discovery.'],
+  ['How does matching work?','Your profile and partner preferences are used to surface compatible members. You can also search by location, education, profession, language, religion and other profile details.'],
+  ['Can anyone message me?','No. Messaging is designed around mutual connection. An interest needs to be accepted before a conversation becomes available.'],
+  ['Can I control who sees my information?','SoulSync includes profile and photo visibility controls, blocking and reporting. Contact visibility is further restricted by connection and membership rules.'],
+  ['What does Premium add?','Premium expands discovery with advanced search, profile visitors, enhanced discovery and eligible contact visibility. Premium Plus adds profile boost, video-call entitlement and priority support.'],
+];
+
+export default function Home() {
   return (
-    <main className="ss-v2-home">
+    <main className="ss-home3">
       <BackendWakeup />
 
-      <nav className="ss-v2-nav">
-        <Link href="/" className="ss-v2-brand">
-          <span className="ss-v2-brand-mark">S</span>
-          <span>SoulSync</span>
-        </Link>
+      <nav className="ss-home3-nav">
+        <Link href="/" className="ss-home3-brand"><span>S</span><b>SoulSync</b></Link>
 
-        <div className="ss-v2-nav-links">
-          <a href="#discover">Discover</a>
-          <a href="#how">How it works</a>
+        <div className="ss-home3-nav-links">
+          <a href="#matches">Matches</a>
+          <a href="#communities">Communities</a>
+          <a href="#safety">Safety</a>
+          <a href="#stories">Stories</a>
           <Link href="/premium">Premium</Link>
         </div>
 
-        <div className="ss-v2-nav-actions">
-          <Link href="/login" className="ss-v2-text-btn">Sign in</Link>
-          <Link href="/register" className="ss-v2-primary">Join SoulSync</Link>
+        <div className="ss-home3-nav-actions">
+          <Link href="/login">Sign in</Link>
+          <Link href="/register" className="ss-home3-nav-primary">Create profile</Link>
         </div>
       </nav>
 
-      <section className="ss-v2-hero">
-        <div className="ss-v2-hero-copy ss-v2-reveal">
-          <span className="ss-v2-kicker">SERIOUS MATCHES. MODERN EXPERIENCE.</span>
-          <h1>Meet someone who <em>feels like home.</em></h1>
+      <section className="ss-home3-hero">
+        <div className="ss-home3-hero-copy">
+          <span className="ss-home3-kicker">MATRIMONY FOR SERIOUS, MEANINGFUL CONNECTIONS</span>
+          <h1>Your search for a life partner can feel <em>simpler, safer and more personal.</em></h1>
           <p>
-            Thoughtful profiles, meaningful compatibility and conversations
-            that begin with mutual interest.
+            Create a detailed matrimonial profile, discover compatible members,
+            express interest privately and start conversations only when the connection is mutual.
           </p>
 
-          <div className="ss-v2-hero-actions">
-            <Link href="/register" className="ss-v2-primary ss-v2-large">Create my profile</Link>
-            <a href="#discover" className="ss-v2-secondary ss-v2-large">See how it works</a>
-          </div>
-
-          <div className="ss-v2-mini-proof">
-            <span><b>✓</b> Private</span>
-            <span><b>✓</b> Intentional</span>
-            <span><b>✓</b> Compatibility-first</span>
+          <div className="ss-home3-hero-proof">
+            <div><b>✓</b><span><strong>Detailed profiles</strong><small>Education, career, lifestyle, family context and interests</small></span></div>
+            <div><b>✓</b><span><strong>Preference-led search</strong><small>Age, location, language, religion, education and profession</small></span></div>
+            <div><b>✓</b><span><strong>Private communication</strong><small>Mutual interests before conversations begin</small></span></div>
           </div>
         </div>
 
-        <div className="ss-v2-hero-visual ss-v2-reveal ss-v2-delay-1">
-          <div className="ss-v2-orbit ss-v2-orbit-one"/>
-          <div className="ss-v2-orbit ss-v2-orbit-two"/>
-
-          <article className="ss-v2-main-profile">
-            <img src="/demo-profiles/demo-001.jpg" alt="Fictional SoulSync demo profile" />
-            <div className="ss-v2-profile-overlay">
-              <div>
-                <strong>Ananya, 26</strong>
-                <span>Austin · Data Analyst</span>
-              </div>
-              <b>94% match</b>
-            </div>
-          </article>
-
-          <article className="ss-v2-floating-card ss-v2-float-a">
-            <img src="/demo-profiles/demo-002.jpg" alt="Fictional demo profile" />
-            <div><strong>Kavya, 27</strong><span>Dallas</span></div>
-          </article>
-
-          <article className="ss-v2-floating-card ss-v2-float-b">
-            <img src="/demo-profiles/demo-003.jpg" alt="Fictional demo profile" />
-            <div><strong>Sneha, 25</strong><span>Richardson</span></div>
-          </article>
-
-          <div className="ss-v2-match-chip">
-            <span>♥</span>
-            <div><strong>New compatible match</strong><small>Based on your preferences</small></div>
-          </div>
-        </div>
+        <HomepageMatchFinder />
       </section>
 
-      <section className="ss-v2-trust-strip ss-v2-reveal">
-        <div><span>01</span><strong>Build your profile</strong></div>
-        <div><span>02</span><strong>Discover compatible people</strong></div>
-        <div><span>03</span><strong>Connect when it’s mutual</strong></div>
+      <section className="ss-home3-trust">
+        <div><span>◉</span><strong>Email-verified accounts</strong><small>Identity signals built into member profiles.</small></div>
+        <div><span>♡</span><strong>Mutual-interest messaging</strong><small>Conversations start with shared intent.</small></div>
+        <div><span>⌁</span><strong>Privacy controls</strong><small>Manage profile and photo visibility.</small></div>
+        <div><span>⚑</span><strong>Block & report</strong><small>Safety controls remain within reach.</small></div>
       </section>
 
-      <section className="ss-v2-discover" id="discover">
-        <div className="ss-v2-section-heading ss-v2-reveal">
-          <span className="ss-v2-kicker">DISCOVER</span>
-          <h2>People, not endless forms.</h2>
-          <p>Get the important details at a glance, then explore when someone catches your attention.</p>
+      <section className="ss-home3-matches" id="matches">
+        <div className="ss-home3-section-head">
+          <div>
+            <span className="ss-home3-kicker">PROFILE PREVIEW</span>
+            <h2>See the kind of detail that makes matrimonial discovery useful.</h2>
+            <p>SoulSync combines photos with the information people actually use when considering a life partner.</p>
+          </div>
+          <Link href="/register">Create profile to explore →</Link>
         </div>
 
-        <div className="ss-v2-profile-row">
-          {profiles.map((p,i)=>(
-            <article key={p.name} className={`ss-v2-profile-card ss-v2-reveal ss-v2-delay-${Math.min(i+1,3)}`}>
-              <div className="ss-v2-card-photo">
-                <img src={p.img} alt={`${p.name} fictional demo profile`} />
-                <span>{p.match}</span>
+        <div className="ss-home3-profile-grid">
+          {previewProfiles.map(profile => (
+            <article key={profile.name} className="ss-home3-profile-card">
+              <div className="ss-home3-profile-photo">
+                <img src={profile.img} alt={`${profile.name} fictional demo profile`} />
+                <span>{profile.match} match</span>
               </div>
-              <div className="ss-v2-card-body">
-                <h3>{p.name}, {p.age}</h3>
-                <p>{p.city} · {p.role}</p>
-                <div className="ss-v2-card-tags">
-                  <span>Verified</span>
-                  <span>Active</span>
+              <div className="ss-home3-profile-body">
+                <h3>{profile.name}, {profile.age}</h3>
+                <p>{profile.city}</p>
+                <div className="ss-home3-profile-facts">
+                  <span>{profile.role}</span><span>{profile.language}</span><span>{profile.religion}</span>
                 </div>
+                <Link href="/register">View similar profiles →</Link>
               </div>
             </article>
           ))}
         </div>
-
-        <p className="ss-v2-demo-label">Fictional demo profiles shown for product preview.</p>
+        <small className="ss-home3-demo-note">Fictional demo profiles shown only to preview the SoulSync experience.</small>
       </section>
 
-      <section className="ss-v2-how" id="how">
-        <div className="ss-v2-how-visual ss-v2-reveal">
-          <div className="ss-v2-phone">
-            <div className="ss-v2-phone-top">
-              <span className="ss-v2-brand-mark">S</span>
-              <strong>For you</strong>
-              <span>♡</span>
-            </div>
-            <img src="/demo-profiles/demo-005.jpg" alt="Fictional SoulSync match preview" />
-            <div className="ss-v2-phone-copy">
-              <strong>Priya, 27</strong>
-              <span>Plano · Product Analyst</span>
-              <div><b>92% compatible</b><b>Recently active</b></div>
-            </div>
+      <section className="ss-home3-communities" id="communities">
+        <div className="ss-home3-section-head centered">
+          <div>
+            <span className="ss-home3-kicker">DISCOVER YOUR WAY</span>
+            <h2>Start with what matters to your family and your future.</h2>
+            <p>Matrimonial discovery is rarely one-size-fits-all. Search can be shaped around cultural, personal and practical preferences.</p>
           </div>
-          <div className="ss-v2-heart-pop">♥</div>
         </div>
 
-        <div className="ss-v2-how-copy ss-v2-reveal ss-v2-delay-1">
-          <span className="ss-v2-kicker">HOW IT WORKS</span>
-          <h2>Simple enough to enjoy.</h2>
+        <div className="ss-home3-community-grid">
+          {communities.map(([name,type]) => (
+            <Link href={`/register?explore=${encodeURIComponent(name)}`} key={name}>
+              <span>{type}</span><strong>{name}</strong><b>→</b>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-          <div className="ss-v2-steps">
-            <div><b>1</b><span><strong>Tell us about you</strong><small>Create a thoughtful profile in a few minutes.</small></span></div>
-            <div><b>2</b><span><strong>Explore your matches</strong><small>Use preferences without making discovery feel like paperwork.</small></span></div>
-            <div><b>3</b><span><strong>Start with mutual interest</strong><small>Conversations open when both people want to connect.</small></span></div>
+      <section className="ss-home3-how">
+        <div className="ss-home3-how-visual">
+          <div className="ss-home3-how-photo large"><img src="/demo-profiles/demo-005.jpg" alt="Fictional demo member" /></div>
+          <div className="ss-home3-how-photo small"><img src="/demo-profiles/demo-012.jpg" alt="Fictional demo member" /></div>
+          <div className="ss-home3-how-badge"><span>♡</span><strong>Mutual connection</strong><small>Conversation unlocked</small></div>
+        </div>
+
+        <div className="ss-home3-how-copy">
+          <span className="ss-home3-kicker">HOW SOULSYNC WORKS</span>
+          <h2>From profile to conversation in three clear steps.</h2>
+
+          <div className="ss-home3-steps">
+            <div><b>1</b><span><strong>Build a meaningful profile</strong><small>Add photos, education, profession, lifestyle, preferences and hobbies.</small></span></div>
+            <div><b>2</b><span><strong>Discover and shortlist</strong><small>Use recommendations or search by the criteria that matter to you.</small></span></div>
+            <div><b>3</b><span><strong>Connect when interest is mutual</strong><small>Accept an interest, then move into private messaging and eligible video calling.</small></span></div>
           </div>
 
-          <Link href="/register" className="ss-v2-primary">Start now</Link>
+          <Link href="/register" className="ss-home3-primary">Start my profile</Link>
         </div>
       </section>
 
-      <section className="ss-v2-safety ss-v2-reveal">
+      <section className="ss-home3-safety" id="safety">
+        <div className="ss-home3-safety-copy">
+          <span className="ss-home3-kicker">TRUST & PRIVACY</span>
+          <h2>Built to help you stay in control of your matrimonial journey.</h2>
+          <p>Serious matchmaking needs more than attractive profiles. SoulSync keeps visibility, contact access and communication intentional.</p>
+        </div>
+
+        <div className="ss-home3-safety-grid">
+          <article><span>01</span><h3>Profile visibility</h3><p>Choose how discoverable your profile should be.</p></article>
+          <article><span>02</span><h3>Photo visibility</h3><p>Choose which photos are public, connection-only or private.</p></article>
+          <article><span>03</span><h3>Contact protection</h3><p>Contact information is not automatically exposed to every member.</p></article>
+          <article><span>04</span><h3>Safety actions</h3><p>Block or report profiles directly whenever something feels wrong.</p></article>
+        </div>
+      </section>
+
+      <section className="ss-home3-premium">
         <div>
-          <span className="ss-v2-kicker">YOUR SPACE, YOUR RULES</span>
-          <h2>Private when you want it. Open when you’re ready.</h2>
+          <span className="ss-home3-kicker">SOULSYNC MEMBERSHIP</span>
+          <h2>More control when you want to take your search further.</h2>
+          <p>Start free, then upgrade only if you want deeper search, visibility insights or additional connection tools.</p>
         </div>
-        <div className="ss-v2-safety-cards">
-          <article><span>◉</span><strong>Photo controls</strong><small>Choose who can see your photos.</small></article>
-          <article><span>♡</span><strong>Mutual messaging</strong><small>Connect after interest is accepted.</small></article>
-          <article><span>⌁</span><strong>Block & report</strong><small>Safety controls are always within reach.</small></article>
+
+        <div className="ss-home3-plan-grid">
+          <article>
+            <span>FREE</span><h3>Start your search</h3>
+            <ul><li>Create your matrimonial profile</li><li>Standard profile discovery</li><li>Compatibility recommendations</li><li>Mutual-interest messaging</li></ul>
+            <Link href="/register">Create free profile</Link>
+          </article>
+          <article className="featured">
+            <span>PREMIUM</span><h3>Go deeper</h3>
+            <ul><li>Advanced search filters</li><li>Unlimited interests</li><li>Profile visitors</li><li>Enhanced discovery</li></ul>
+            <Link href="/premium">Explore Premium</Link>
+          </article>
+          <article>
+            <span>PREMIUM+</span><h3>Stand out & connect</h3>
+            <ul><li>Profile boost</li><li>Video-call entitlement</li><li>Priority support</li><li>Everything in Premium</li></ul>
+            <Link href="/premium-plus">Explore Premium+</Link>
+          </article>
         </div>
       </section>
 
-      <section className="ss-v2-cta ss-v2-reveal">
+      <section className="ss-home3-stories" id="stories">
+        <div className="ss-home3-section-head">
+          <div>
+            <span className="ss-home3-kicker">SAMPLE MEMBER STORIES</span>
+            <h2>A matrimony website should feel human, not transactional.</h2>
+            <p>These illustrative stories show the kind of member experience SoulSync is designed to support.</p>
+          </div>
+        </div>
+
+        <div className="ss-home3-story-grid">
+          <article>
+            <div><img src="/demo-profiles/demo-006.jpg" alt="Fictional demo member" /><img src="/demo-profiles/demo-013.jpg" alt="Fictional demo member" /></div>
+            <span>DEMO STORY</span>
+            <h3>“We started by talking about family, work and what home meant to us.”</h3>
+            <p>A sample story about two fictional members who connected after noticing shared values and similar expectations for the future.</p>
+          </article>
+          <article>
+            <div><img src="/demo-profiles/demo-007.jpg" alt="Fictional demo member" /><img src="/demo-profiles/demo-014.jpg" alt="Fictional demo member" /></div>
+            <span>DEMO STORY</span>
+            <h3>“The detailed profile made the first conversation much easier.”</h3>
+            <p>A sample member experience showing how education, hobbies and lifestyle context can create a more natural introduction.</p>
+          </article>
+          <article>
+            <div><img src="/demo-profiles/demo-008.jpg" alt="Fictional demo member" /><img src="/demo-profiles/demo-015.jpg" alt="Fictional demo member" /></div>
+            <span>DEMO STORY</span>
+            <h3>“There was no pressure to rush into a conversation.”</h3>
+            <p>A sample story illustrating a slower, mutual-interest approach to serious matchmaking.</p>
+          </article>
+        </div>
+
+        <small className="ss-home3-demo-note">These are fictional product-preview stories, not real customer reviews or endorsements.</small>
+      </section>
+
+      <section className="ss-home3-faq">
         <div>
-          <span>READY WHEN YOU ARE</span>
-          <h2>Your next chapter can start here.</h2>
+          <span className="ss-home3-kicker">QUESTIONS</span>
+          <h2>Know what to expect before you join.</h2>
         </div>
-        <Link href="/register" className="ss-v2-primary ss-v2-large">Create my profile</Link>
+        <div className="ss-home3-faq-list">
+          {faqs.map(([question,answer]) => (
+            <details key={question}><summary>{question}</summary><p>{answer}</p></details>
+          ))}
+        </div>
       </section>
 
-      <footer className="ss-v2-footer">
-        <div className="ss-v2-brand">
-          <span className="ss-v2-brand-mark">S</span>
-          <span>SoulSync</span>
+      <section className="ss-home3-final">
+        <div>
+          <span className="ss-home3-kicker">READY TO BEGIN?</span>
+          <h2>Build a profile that says more than a photograph can.</h2>
+          <p>Join SoulSync and start discovering people through compatibility, context and mutual intent.</p>
         </div>
-        <span>Meaningful matches, built with intention.</span>
-        <div><Link href="/login">Sign in</Link><Link href="/premium">Premium</Link></div>
+        <div>
+          <Link href="/register" className="ss-home3-primary">Create my profile</Link>
+          <Link href="/login" className="ss-home3-secondary">I already have an account</Link>
+        </div>
+      </section>
+
+      <footer className="ss-home3-footer">
+        <div className="ss-home3-brand"><span>S</span><b>SoulSync</b></div>
+        <p>A modern matrimonial platform for meaningful, marriage-minded connections.</p>
+        <div><Link href="/register">Create profile</Link><Link href="/login">Sign in</Link><Link href="/premium">Premium</Link></div>
       </footer>
     </main>
   );
