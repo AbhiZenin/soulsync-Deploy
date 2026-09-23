@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import AppShell from '@/components/AppShell';
 import SecureImage from '@/components/SecureImage';
+import HobbiesEditor from '@/components/HobbiesEditor';
 import { api } from '@/lib/api';
 import type { ProfileDetail } from '@/lib/types';
 
@@ -664,6 +665,8 @@ export default function Profile() {
               />
             </div>
           </section>
+
+          <HobbiesEditor />
 
           <section className="ss-profile-card ss-profile-privacy-card">
             <SectionHeader

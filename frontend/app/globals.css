@@ -13201,3 +13201,542 @@ textarea::placeholder {
     transition: none !important;
   }
 }
+
+/* SoulSync Matrimony Hobbies V5.1 */
+
+/* ---- browse cards: identity never overlays the photo ---- */
+.ss-m51-card {
+  overflow: hidden !important;
+  border: 1px solid #eee1e5 !important;
+  border-radius: 22px !important;
+  background: #fff !important;
+  box-shadow: 0 14px 34px rgba(70,43,54,.075) !important;
+}
+
+.ss-m51-photo {
+  position: relative;
+  display: block;
+  min-height: 300px !important;
+  overflow: hidden;
+  background: #f5e8ec !important;
+}
+
+.ss-m51-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ss-m51-placeholder {
+  display: grid;
+  min-height: 300px;
+  place-items: center;
+  color: #a94669;
+  font-size: 60px;
+}
+
+.ss-m51-photo-top {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  left: 11px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.ss-m51-match,
+.ss-m51-active {
+  border-radius: 999px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 5px 15px rgba(50,30,39,.09);
+}
+
+.ss-m51-match {
+  padding: 7px 10px;
+  color: #9e3c60;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.ss-m51-save {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  place-items: center;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,.96);
+  color: #7f6d74;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(50,30,39,.09);
+}
+
+.ss-m51-save.saved {
+  color: #a23e63;
+}
+
+.ss-m51-active {
+  position: absolute;
+  bottom: 11px;
+  left: 11px;
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  padding: 6px 8px;
+  color: #49675d;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.ss-m51-active i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2c9673;
+}
+
+.ss-m51-body {
+  padding: 16px !important;
+}
+
+.ss-m51-name-row {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.ss-m51-name-row h3 {
+  margin: 0 !important;
+  color: #34282d !important;
+  font-size: 19px !important;
+  font-weight: 850 !important;
+  line-height: 1.2 !important;
+}
+
+.ss-m51-verified {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eaf7f2;
+  color: #2b8067;
+  font-size: 9px;
+}
+
+.ss-m51-location {
+  margin: 5px 0 0 !important;
+  color: #75656c !important;
+  font-size: 12px !important;
+}
+
+.ss-m51-facts {
+  display: grid;
+  gap: 8px;
+  margin-top: 13px;
+  padding: 12px 0;
+  border-top: 1px solid #f0e5e8;
+  border-bottom: 1px solid #f0e5e8;
+}
+
+.ss-m51-facts div {
+  display: grid;
+  grid-template-columns: 76px minmax(0,1fr);
+  gap: 8px;
+}
+
+.ss-m51-facts span {
+  color: #9a8990 !important;
+  font-size: 10px !important;
+  font-weight: 700;
+}
+
+.ss-m51-facts strong {
+  overflow: hidden;
+  color: #4d3c43;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ss-m51-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 11px;
+}
+
+.ss-m51-tags span {
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: #fff1f4;
+  color: #76505f;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ss-m51-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 13px;
+}
+
+.ss-m51-actions .primary-btn,
+.ss-m51-actions .secondary-btn {
+  min-height: 41px !important;
+  padding: 8px 9px !important;
+  font-size: 11px !important;
+}
+
+/* ---- my profile hobbies ---- */
+.ss-m51-hobbies-editor {
+  grid-column: 1 / -1;
+  padding: 24px !important;
+  background:
+    radial-gradient(circle at 95% 5%,rgba(212,105,143,.08),transparent 26%),
+    linear-gradient(135deg,#fff,#fff7f9) !important;
+}
+
+.ss-m51-hobbies-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: end;
+}
+
+.ss-m51-hobbies-head h2 {
+  margin: 5px 0 4px !important;
+}
+
+.ss-m51-hobbies-head p {
+  max-width: 680px;
+  margin: 0 !important;
+  color: #7c6b72 !important;
+  font-size: 13px !important;
+}
+
+.ss-m51-hobby-pills {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.ss-m51-hobby-pills button {
+  min-height: 35px !important;
+  padding: 7px 10px !important;
+  border: 1px solid #eadde1;
+  border-radius: 999px !important;
+  background: #fff;
+  color: #6d5962;
+  font-size: 11px !important;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.ss-m51-hobby-pills button.active {
+  border-color: #e5bfd0;
+  background: #fff0f4;
+  color: #9e3c60;
+}
+
+.ss-m51-hobby-custom {
+  margin-top: 18px;
+}
+
+.ss-m51-hobby-message {
+  margin-top: 10px;
+  color: #2c8067;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ---- public member profile ---- */
+.ss-m51-public {
+  display: grid;
+  gap: 22px;
+}
+
+.ss-m51-public-hero {
+  display: grid;
+  grid-template-columns: .82fr 1.18fr;
+  min-height: 500px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(70,43,54,.075);
+}
+
+.ss-m51-public-main-photo {
+  min-height: 500px;
+  overflow: hidden;
+  background: #f4e8ec;
+}
+
+.ss-m51-public-main-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ss-m51-public-placeholder {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: #a74669;
+  font-size: 92px;
+}
+
+.ss-m51-public-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 44px;
+}
+
+.ss-m51-public-name {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ss-m51-public-name h2 {
+  margin: 7px 0 0 !important;
+  color: #35292e !important;
+  font-size: clamp(38px,4vw,55px) !important;
+  line-height: 1.03 !important;
+}
+
+.ss-m51-public-name > span {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #edf8f4;
+  color: #2c8067;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.ss-m51-public-meta {
+  margin: 9px 0 0 !important;
+  color: #7e6e75 !important;
+  font-size: 14px !important;
+}
+
+.ss-m51-public-about {
+  max-width: 720px;
+  margin: 24px 0 0 !important;
+  color: #594950 !important;
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+}
+
+.ss-m51-public-tags {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.ss-m51-public-tags span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #fff1f4;
+  color: #754f5e;
+  font-size: 11px;
+}
+
+.ss-m51-public-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 27px;
+}
+
+.ss-m51-public-gallery,
+.ss-m51-public-section,
+.ss-m51-public-hobbies,
+.ss-m51-safety {
+  padding: 22px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 11px 30px rgba(72,45,56,.05);
+}
+
+.ss-m51-section-title h3 {
+  margin: 4px 0 0 !important;
+}
+
+.ss-m51-section-title p {
+  max-width: 650px;
+  margin: 5px 0 0 !important;
+  color: #817077 !important;
+  font-size: 12px !important;
+}
+
+.ss-m51-public-gallery > div:last-child {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.ss-m51-public-gallery > div:last-child > div {
+  height: 210px;
+  overflow: hidden;
+  border-radius: 17px;
+  background: #f4e8ec;
+}
+
+.ss-m51-public-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ss-m51-public-columns {
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.ss-m51-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 0 22px;
+  margin-top: 13px;
+}
+
+.ss-m51-detail-grid > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0,1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0e5e8;
+}
+
+.ss-m51-detail-grid span {
+  color: #95858c;
+  font-size: 11px;
+}
+
+.ss-m51-detail-grid strong {
+  color: #4b3b42;
+  font-size: 13px;
+}
+
+.ss-m51-public-side {
+  display: grid;
+  gap: 12px;
+}
+
+.ss-m51-public-hobbies {
+  display: grid;
+  grid-template-columns: .75fr 1.25fr;
+  gap: 20px;
+  align-items: center;
+  background: linear-gradient(135deg,#fff8fa,#fff) !important;
+}
+
+.ss-m51-public-hobby-list {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.ss-m51-public-hobby-list span {
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: #fff0f4;
+  color: #79505f;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.ss-m51-safety {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  align-items: center;
+  box-shadow: none;
+  border: 1px solid #f0e5e8;
+}
+
+.ss-m51-safety h3 {
+  margin: 4px 0 3px !important;
+}
+
+.ss-m51-safety p {
+  margin: 0 !important;
+  color: #83737a !important;
+  font-size: 12px !important;
+}
+
+.ss-m51-safety > div:last-child {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.ss-m51-public-loading {
+  display: grid;
+  min-height: 400px;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+}
+
+@media (max-width: 950px) {
+  .ss-m51-public-hero,
+  .ss-m51-public-columns,
+  .ss-m51-public-hobbies {
+    grid-template-columns: 1fr;
+  }
+
+  .ss-m51-public-main-photo {
+    min-height: 520px;
+  }
+
+  .ss-m51-public-hobby-list {
+    justify-content: flex-start;
+  }
+
+  .ss-m51-public-gallery > div:last-child {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .ss-m51-photo,
+  .ss-m51-placeholder {
+    min-height: 400px !important;
+  }
+
+  .ss-m51-hobbies-head,
+  .ss-m51-safety {
+    display: grid;
+    align-items: start;
+  }
+
+  .ss-m51-public-intro {
+    padding: 28px 21px;
+  }
+
+  .ss-m51-public-main-photo {
+    min-height: 430px;
+  }
+
+  .ss-m51-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ss-m51-public-gallery > div:last-child {
+    grid-template-columns: 1fr 1fr;
+  }
+}

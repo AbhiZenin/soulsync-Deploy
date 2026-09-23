@@ -6,10 +6,10 @@ import SecureImage from '@/components/SecureImage';
 import {api} from '@/lib/api';
 import type {ProfileCard as Card} from '@/lib/types';
 
-function isRecent(lastActiveAt?: string) {
-  if (!lastActiveAt) return false;
-  const value = new Date(lastActiveAt).getTime();
-  return Number.isFinite(value) && Date.now() - value < 7 * 24 * 60 * 60 * 1000;
+function recentlyActive(value?: string) {
+  if (!value) return false;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time) && Date.now() - time < 7 * 24 * 60 * 60 * 1000;
 }
 
 export default function ProfileCard({
@@ -47,11 +47,13 @@ export default function ProfileCard({
     }
   }
 
+  const location = [profile.city, profile.state].filter(Boolean).join(', ');
+
   return (
-    <article className="profile-card ss-romance-card">
+    <article className="profile-card ss-m51-card">
       <Link
         href={`/profile/${profile.userId}`}
-        className="profile-photo ss-romance-photo"
+        className="profile-photo ss-m51-photo"
       >
         {profile.primaryPhoto ? (
           <SecureImage
@@ -59,63 +61,90 @@ export default function ProfileCard({
             alt={profile.displayName}
           />
         ) : (
-          <div className="photo-placeholder ss-romance-placeholder">
+          <div className="photo-placeholder ss-m51-placeholder">
             {profile.displayName?.[0] ?? 'S'}
           </div>
         )}
 
-        <div className="ss-romance-photo-shade" />
-
-        <div className="ss-romance-photo-top">
+        <div className="ss-m51-photo-top">
           {typeof profile.matchScore === 'number' && (
-            <span>{profile.matchScore}% match</span>
+            <span className="ss-m51-match">
+              {profile.matchScore}% match
+            </span>
           )}
 
           <button
             type="button"
-            className={saved ? 'ss-romance-save saved' : 'ss-romance-save'}
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
+            className={saved ? 'ss-m51-save saved' : 'ss-m51-save'}
+            aria-label="Save to shortlist"
+            onClick={event => {
+              event.preventDefault();
+              event.stopPropagation();
               void shortlist();
             }}
-            aria-label="Save to shortlist"
           >
             {saved ? '★' : '☆'}
           </button>
         </div>
 
-        <div className="ss-romance-photo-bottom">
-          {isRecent(profile.lastActiveAt) && (
-            <span className="ss-romance-active"><i /> Recently active</span>
-          )}
+        {recentlyActive(profile.lastActiveAt) && (
+          <span className="ss-m51-active">
+            <i /> Recently active
+          </span>
+        )}
+      </Link>
+
+      <div className="profile-body ss-m51-body">
+        <div className="ss-m51-name-row">
           <h3>
             {profile.displayName}
             {profile.age ? `, ${profile.age}` : ''}
-            {profile.emailVerified && (
-              <b title="Email verified">✓</b>
-            )}
           </h3>
-          <p>
-            {[profile.city, profile.state].filter(Boolean).join(', ')}
-          </p>
-        </div>
-      </Link>
 
-      <div className="profile-body ss-romance-body">
-        <div className="ss-romance-details">
-          {[profile.occupation, profile.motherTongue]
+          {profile.emailVerified && (
+            <span className="ss-m51-verified" title="Email verified">
+              ✓
+            </span>
+          )}
+        </div>
+
+        <p className="ss-m51-location">
+          {[
+            profile.heightCm ? `${profile.heightCm} cm` : null,
+            location || null,
+          ]
             .filter(Boolean)
-            .slice(0, 2)
+            .join(' · ') || 'SoulSync member'}
+        </p>
+
+        <div className="ss-m51-facts">
+          {profile.occupation && (
+            <div>
+              <span>Profession</span>
+              <strong>{profile.occupation}</strong>
+            </div>
+          )}
+
+          {profile.education && (
+            <div>
+              <span>Education</span>
+              <strong>{profile.education}</strong>
+            </div>
+          )}
+        </div>
+
+        <div className="ss-m51-tags">
+          {[profile.motherTongue, profile.religion]
+            .filter(Boolean)
             .map(value => (
               <span key={String(value)}>{value}</span>
             ))}
         </div>
 
-        <div className="ss-romance-actions">
+        <div className="ss-m51-actions">
           <Link
-            className="secondary-btn"
             href={`/profile/${profile.userId}`}
+            className="secondary-btn"
           >
             View profile
           </Link>
@@ -123,8 +152,8 @@ export default function ProfileCard({
           <button
             type="button"
             className="primary-btn"
-            onClick={() => void interest()}
             disabled={busy || sent}
+            onClick={() => void interest()}
           >
             {busy ? 'Sending…' : sent ? 'Interest sent ✓' : 'Send interest'}
           </button>
