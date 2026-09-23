@@ -12376,3 +12376,828 @@ textarea::placeholder {
   .ss-simple-story-photos img{width:135px;height:170px}
 }
 @media (prefers-reduced-motion:reduce){.ss-simple-skeleton{animation:none!important}}
+
+/* SoulSync Full App Matrimony Polish V4 */
+
+/* =========================================================
+   1. PRODUCT-WIDE VISUAL LANGUAGE
+   ========================================================= */
+:root {
+  --ss4-bg: #fffaf8;
+  --ss4-surface: #ffffff;
+  --ss4-surface-soft: #fff4f6;
+  --ss4-surface-warm: #fff8f2;
+  --ss4-text: #4c3b42;
+  --ss4-text-strong: #34282d;
+  --ss4-muted: #7e6e75;
+  --ss4-line: #efe2e6;
+  --ss4-brand: #ad456b;
+  --ss4-brand-deep: #8f3456;
+  --ss4-gold: #bd8a49;
+  --ss4-success: #2e8168;
+  --ss4-shadow: 0 14px 34px rgba(78, 48, 60, .06);
+}
+
+body {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(224, 173, 107, .07), transparent 22%),
+    linear-gradient(180deg, #fffdfc, var(--ss4-bg)) !important;
+  color: var(--ss4-text) !important;
+}
+
+.ss-clean-content,
+.ss-app-content,
+.main {
+  color: var(--ss4-text) !important;
+}
+
+/* keep the public landing expressive; make the logged-in product easier to scan */
+.ss-clean-content,
+.ss-app-content {
+  font-family:
+    Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif !important;
+}
+
+.ss-clean-content p,
+.ss-app-content p,
+.ss-clean-content li,
+.ss-app-content li,
+.ss-clean-content label,
+.ss-app-content label,
+.ss-clean-content input,
+.ss-app-content input,
+.ss-clean-content select,
+.ss-app-content select,
+.ss-clean-content textarea,
+.ss-app-content textarea {
+  color: var(--ss4-text) !important;
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+}
+
+.ss-clean-content .muted,
+.ss-app-content .muted,
+.ss-clean-content small,
+.ss-app-content small {
+  color: var(--ss4-muted) !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+.ss-clean-content h1,
+.ss-clean-content h2,
+.ss-clean-content h3,
+.ss-clean-content h4,
+.ss-app-content h1,
+.ss-app-content h2,
+.ss-app-content h3,
+.ss-app-content h4 {
+  color: var(--ss4-text-strong) !important;
+  font-family:
+    Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif !important;
+  letter-spacing: -.035em !important;
+}
+
+.ss-clean-content h2,
+.ss-app-content h2 {
+  font-size: clamp(24px, 2.4vw, 32px) !important;
+  line-height: 1.15 !important;
+}
+
+.ss-clean-content h3,
+.ss-app-content h3 {
+  font-size: 18px !important;
+  line-height: 1.25 !important;
+}
+
+.eyebrow,
+.ss-search-kicker,
+.ss-dash-kicker,
+.ss-premium-kicker,
+.ss-simple-kicker {
+  color: var(--ss4-brand) !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: .13em !important;
+}
+
+/* =========================================================
+   2. LESS "BOXES", MORE SECTIONS
+   ========================================================= */
+.ss-clean-content .panel,
+.ss-app-content .panel,
+.ss-clean-content .plan,
+.ss-app-content .plan,
+.ss-clean-content .conversation-list,
+.ss-app-content .conversation-list,
+.ss-clean-content .chat,
+.ss-app-content .chat,
+.ss-clean-content .ss-search-filter-card,
+.ss-app-content .ss-search-filter-card,
+.ss-clean-content .ss-settings-card,
+.ss-app-content .ss-settings-card {
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: rgba(255,255,255,.92) !important;
+  box-shadow: var(--ss4-shadow) !important;
+}
+
+.ss-clean-content .dashboard-grid,
+.ss-app-content .dashboard-grid {
+  gap: 20px !important;
+}
+
+.ss-clean-content .list-row,
+.ss-app-content .list-row {
+  padding: 15px 4px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--ss4-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.ss-clean-content .list-row:last-child,
+.ss-app-content .list-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.ss-clean-content .list-row:hover,
+.ss-app-content .list-row:hover {
+  background: #fff9fa !important;
+}
+
+.ss-clean-content .panel-head,
+.ss-app-content .panel-head {
+  margin-bottom: 14px !important;
+  padding-bottom: 11px !important;
+  border-bottom: 1px solid var(--ss4-line) !important;
+}
+
+.ss-clean-content .section-gap,
+.ss-app-content .section-gap {
+  margin-top: 22px !important;
+}
+
+.ss-clean-content .empty,
+.ss-app-content .empty {
+  padding: 32px 22px !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(210, 96, 136, .07), transparent 28%),
+    #fff6f8 !important;
+  color: var(--ss4-muted) !important;
+  text-align: center !important;
+}
+
+/* =========================================================
+   3. PROFILE CARDS — PHOTO FIRST
+   ========================================================= */
+.profile-grid {
+  gap: 17px !important;
+}
+
+.profile-card,
+.ss-member-card,
+.ss-romance-card {
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 23px !important;
+  background: #fff !important;
+  box-shadow: 0 14px 32px rgba(74, 46, 57, .075) !important;
+  transition: transform .22s ease, box-shadow .22s ease !important;
+}
+
+.profile-card:hover,
+.ss-member-card:hover,
+.ss-romance-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 22px 44px rgba(74, 46, 57, .12) !important;
+}
+
+.profile-photo,
+.ss-member-photo,
+.ss-romance-photo {
+  min-height: 310px !important;
+  background: #f6e9ed !important;
+}
+
+.profile-photo img,
+.ss-member-photo img,
+.ss-romance-photo img {
+  object-fit: cover !important;
+}
+
+.profile-body,
+.ss-member-body,
+.ss-romance-body {
+  padding: 15px !important;
+}
+
+.profile-title h3,
+.ss-member-title-row h3 {
+  font-size: 17px !important;
+}
+
+.profile-title p,
+.ss-member-title-row p {
+  color: var(--ss4-muted) !important;
+  font-size: 12px !important;
+}
+
+.match-pill {
+  padding: 6px 9px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.94) !important;
+  color: var(--ss4-brand-deep) !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  box-shadow: 0 5px 16px rgba(65, 39, 50, .08) !important;
+}
+
+.tags,
+.ss-member-tags,
+.ss-romance-details {
+  gap: 6px !important;
+}
+
+.tags span,
+.ss-member-tags span,
+.ss-romance-details span {
+  padding: 6px 9px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #fff1f4 !important;
+  color: #76515f !important;
+  font-size: 11px !important;
+}
+
+.card-actions,
+.ss-member-actions,
+.ss-romance-actions {
+  gap: 8px !important;
+  margin-top: 13px !important;
+}
+
+/* =========================================================
+   4. SEARCH — COMPACT FILTERS, PROFILES TAKE PRIORITY
+   ========================================================= */
+.ss-search-page {
+  display: grid !important;
+  gap: 24px !important;
+}
+
+.ss-search-hero {
+  min-height: auto !important;
+  padding: 24px 27px !important;
+  border: 0 !important;
+  border-radius: 23px !important;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(216, 113, 149, .10), transparent 30%),
+    linear-gradient(135deg, #fffdfc, #fff5f7) !important;
+  box-shadow: none !important;
+}
+
+.ss-search-hero-copy h1,
+.ss-search-hero-copy h2 {
+  max-width: 720px !important;
+  margin: 5px 0 7px !important;
+  font-size: clamp(30px, 3vw, 40px) !important;
+}
+
+.ss-search-hero-copy p {
+  max-width: 720px !important;
+  margin: 0 !important;
+}
+
+.ss-search-heart {
+  width: 70px !important;
+  height: 70px !important;
+  opacity: .75 !important;
+}
+
+.ss-search-filter-card {
+  padding: 22px !important;
+}
+
+.ss-search-primary-filters,
+.ss-search-advanced {
+  gap: 12px !important;
+}
+
+.ss-search-field label,
+.ss-search-age label {
+  color: #705d65 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+.ss-search-filter-footer {
+  margin-top: 15px !important;
+  padding-top: 13px !important;
+  border-top: 1px solid var(--ss4-line) !important;
+}
+
+.ss-search-results-head {
+  margin-bottom: 13px !important;
+}
+
+.ss-search-start {
+  padding: 36px !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: #fff6f8 !important;
+}
+
+.ss-search-start-tips {
+  gap: 8px !important;
+}
+
+.ss-search-start-tips > * {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+/* =========================================================
+   5. INTERESTS — FEELS LIKE PEOPLE ACTIVITY, NOT A DATA TABLE
+   ========================================================= */
+.dashboard-grid .panel .list {
+  display: grid !important;
+  gap: 0 !important;
+}
+
+.dashboard-grid .panel .list-row h4 {
+  margin: 0 0 3px !important;
+  font-size: 16px !important;
+}
+
+.dashboard-grid .panel .list-row p {
+  margin: 0 !important;
+  color: var(--ss4-muted) !important;
+  font-size: 12px !important;
+}
+
+.status {
+  padding: 6px 9px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+}
+
+.status.PENDING {
+  background: #fff5e8 !important;
+  color: #9e6b2f !important;
+}
+
+.status.ACCEPTED,
+.status.ACTIVE {
+  background: #edf8f4 !important;
+  color: var(--ss4-success) !important;
+}
+
+.status.DECLINED,
+.status.BLOCKED {
+  background: #fff0f1 !important;
+  color: #a54e5c !important;
+}
+
+/* =========================================================
+   6. MESSAGES — MODERN CONVERSATION EXPERIENCE
+   ========================================================= */
+.split {
+  gap: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 24px !important;
+  background: #fff !important;
+  box-shadow: var(--ss4-shadow) !important;
+}
+
+.conversation-list,
+.ss-chat-sidebar {
+  border: 0 !important;
+  border-right: 1px solid var(--ss4-line) !important;
+  background: #fffafc !important;
+}
+
+.conversation,
+.ss-chat-conversation {
+  min-height: 62px !important;
+  padding: 12px 14px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: transparent !important;
+  color: var(--ss4-text) !important;
+}
+
+.conversation:hover,
+.ss-chat-conversation:hover,
+.conversation.active,
+.ss-chat-conversation.active {
+  background: #fff0f4 !important;
+}
+
+.chat,
+.ss-chat-main {
+  border: 0 !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(220, 130, 160, .05), transparent 22%),
+    #fff !important;
+}
+
+.chat-head,
+.ss-chat-head {
+  padding: 15px 18px !important;
+  border-bottom: 1px solid var(--ss4-line) !important;
+  color: var(--ss4-text-strong) !important;
+  font-size: 16px !important;
+  font-weight: 850 !important;
+}
+
+.messages,
+.ss-chat-messages {
+  padding: 18px !important;
+  gap: 9px !important;
+}
+
+.message {
+  max-width: min(72%, 620px) !important;
+  padding: 10px 13px !important;
+  border: 0 !important;
+  border-radius: 16px 16px 16px 5px !important;
+  background: #f7f1f3 !important;
+  color: var(--ss4-text-strong) !important;
+  box-shadow: none !important;
+}
+
+.message.mine {
+  border-radius: 16px 16px 5px 16px !important;
+  background: linear-gradient(135deg, #b24b71, #9b3d60) !important;
+  color: #fff !important;
+}
+
+.message.mine small,
+.message.mine * {
+  color: rgba(255,255,255,.84) !important;
+}
+
+.chat-compose,
+.ss-chat-compose {
+  gap: 8px !important;
+  padding: 13px 16px !important;
+  border-top: 1px solid var(--ss4-line) !important;
+  background: #fff !important;
+}
+
+.chat-compose input,
+.ss-chat-compose input {
+  border-radius: 999px !important;
+  background: #fff8fa !important;
+}
+
+/* =========================================================
+   7. PUBLIC MEMBER PROFILE — GALLERY + DETAILS
+   ========================================================= */
+.profile-editor {
+  gap: 20px !important;
+}
+
+.profile-editor > .panel:first-child {
+  padding: 18px !important;
+}
+
+.photo-grid {
+  gap: 9px !important;
+}
+
+.photo-tile {
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 19px !important;
+  background: #f5e9ed !important;
+  box-shadow: none !important;
+}
+
+.photo-tile img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.profile-editor > aside.panel {
+  position: sticky !important;
+  top: 20px !important;
+  align-self: start !important;
+}
+
+.profile-editor > aside.panel .list-row {
+  display: grid !important;
+  grid-template-columns: minmax(100px,.7fr) 1.3fr !important;
+  gap: 14px !important;
+}
+
+.profile-editor > aside.panel .list-row strong {
+  color: var(--ss4-text-strong) !important;
+  text-align: right !important;
+}
+
+/* =========================================================
+   8. MY PROFILE + PREFERENCES — FRIENDLIER FORMS
+   ========================================================= */
+.profile-editor .form,
+.ss-clean-content .form,
+.ss-app-content .form {
+  gap: 15px !important;
+}
+
+.field {
+  gap: 6px !important;
+}
+
+.field label {
+  color: #705d65 !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+}
+
+input,
+select,
+textarea {
+  min-height: 46px !important;
+  border: 1px solid #e8dadd !important;
+  border-radius: 13px !important;
+  background: #fff !important;
+  color: var(--ss4-text-strong) !important;
+  box-shadow: none !important;
+}
+
+textarea {
+  min-height: 110px !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #d790aa !important;
+  box-shadow: 0 0 0 4px rgba(173,69,107,.08) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #a29399 !important;
+}
+
+/* =========================================================
+   9. SETTINGS — CALM ACCOUNT CENTER
+   ========================================================= */
+.ss-settings-top {
+  gap: 18px !important;
+}
+
+.ss-settings-top .panel,
+.ss-settings-card {
+  padding: 20px !important;
+}
+
+.ss-settings-card .list-row,
+.ss-settings-top .list-row {
+  padding: 13px 2px !important;
+}
+
+.ss-settings-card h2,
+.ss-settings-top h2 {
+  margin-bottom: 10px !important;
+}
+
+/* =========================================================
+   10. PREMIUM — POLISHED MEMBERSHIP, NOT A PRICING DOCUMENT
+   ========================================================= */
+.premium-grid {
+  gap: 15px !important;
+  align-items: stretch !important;
+}
+
+.plan {
+  position: relative !important;
+  padding: 24px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--ss4-line) !important;
+  border-radius: 24px !important;
+  background: #fff !important;
+  box-shadow: 0 13px 34px rgba(75,47,59,.055) !important;
+}
+
+.plan.featured {
+  border-color: #e7c5d1 !important;
+  background:
+    radial-gradient(circle at 95% 0%, rgba(210, 99, 137, .10), transparent 28%),
+    linear-gradient(145deg,#fff,#fff4f7) !important;
+}
+
+.plan h3 {
+  margin-top: 14px !important;
+  font-size: 21px !important;
+}
+
+.plan-price {
+  margin: 9px 0 17px !important;
+  color: var(--ss4-brand-deep) !important;
+  font-size: 32px !important;
+  font-weight: 850 !important;
+  letter-spacing: -.04em !important;
+}
+
+.plan ul {
+  display: grid !important;
+  gap: 9px !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.plan li {
+  position: relative !important;
+  padding-left: 20px !important;
+  font-size: 13px !important;
+}
+
+.plan li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--ss4-success);
+  font-weight: 900;
+}
+
+/* support likely Premium+ class families without overwriting behavior */
+[class*="premium-plus"] .panel,
+[class*="premiumPlus"] .panel,
+[class*="ss-plus"] .panel {
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: #fff !important;
+  box-shadow: var(--ss4-shadow) !important;
+}
+
+/* =========================================================
+   11. NOTIFICATIONS + ADMIN
+   ========================================================= */
+.ss-clean-content table,
+.ss-app-content table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+}
+
+.ss-clean-content th,
+.ss-app-content th {
+  padding: 11px 13px !important;
+  border-bottom: 1px solid var(--ss4-line) !important;
+  background: #fff7f9 !important;
+  color: #735f67 !important;
+  font-size: 11px !important;
+  text-align: left !important;
+}
+
+.ss-clean-content td,
+.ss-app-content td {
+  padding: 12px 13px !important;
+  border-bottom: 1px solid var(--ss4-line) !important;
+  font-size: 13px !important;
+}
+
+/* =========================================================
+   12. BUTTONS / ACTIONS
+   ========================================================= */
+.primary-btn,
+.secondary-btn,
+.ghost-btn,
+.danger-btn {
+  min-height: 42px !important;
+  padding: 9px 14px !important;
+  border-radius: 13px !important;
+  font-size: 13px !important;
+  font-weight: 850 !important;
+}
+
+.primary-btn {
+  border: 0 !important;
+  background: linear-gradient(135deg, var(--ss4-brand), var(--ss4-brand-deep)) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(173,69,107,.18) !important;
+}
+
+.secondary-btn,
+.ghost-btn {
+  border: 1px solid var(--ss4-line) !important;
+  background: #fff !important;
+  color: var(--ss4-brand-deep) !important;
+}
+
+.danger-btn {
+  border: 1px solid #f0d7dc !important;
+  background: #fff6f7 !important;
+  color: #a44e5c !important;
+}
+
+/* =========================================================
+   13. SUBTLE MOTION — PRODUCT FEELS ALIVE
+   ========================================================= */
+.profile-card,
+.plan,
+.conversation,
+.list-row,
+.primary-btn,
+.secondary-btn,
+.ghost-btn,
+.photo-tile {
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    border-color .18s ease !important;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover,
+.ghost-btn:hover {
+  transform: translateY(-1px) !important;
+}
+
+.photo-tile:hover {
+  transform: translateY(-2px) !important;
+}
+
+/* =========================================================
+   14. RESPONSIVE
+   ========================================================= */
+@media (max-width: 1050px) {
+  .premium-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .profile-editor > aside.panel {
+    position: static !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .ss-clean-content p,
+  .ss-app-content p,
+  .ss-clean-content li,
+  .ss-app-content li,
+  .ss-clean-content label,
+  .ss-app-content label {
+    font-size: 15px !important;
+  }
+
+  .profile-grid,
+  .ss-search-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .premium-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .split {
+    border-radius: 18px !important;
+  }
+
+  .conversation-list,
+  .ss-chat-sidebar {
+    border-right: 0 !important;
+  }
+
+  .profile-editor > aside.panel .list-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .profile-editor > aside.panel .list-row strong {
+    text-align: left !important;
+  }
+
+  .profile-photo,
+  .ss-member-photo,
+  .ss-romance-photo {
+    min-height: 390px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-card,
+  .plan,
+  .conversation,
+  .list-row,
+  .primary-btn,
+  .secondary-btn,
+  .ghost-btn,
+  .photo-tile {
+    transition: none !important;
+  }
+}
